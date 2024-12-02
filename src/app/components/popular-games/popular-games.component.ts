@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GameService } from '../../services/game.service';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-popular-games',
@@ -11,7 +13,7 @@ export class PopularGamesComponent implements OnInit {
   popularGames: any[] = [];
   isLoading = true;
 
-  constructor(private gameService: GameService) { }
+  constructor(private gameService: GameService, private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.gameService.getPopularGames().subscribe({
@@ -24,5 +26,9 @@ export class PopularGamesComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  formatarData(data: string) {
+    return this.datePipe.transform(data, 'dd/MM/yyyy');
   }
 }

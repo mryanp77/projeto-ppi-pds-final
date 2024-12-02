@@ -11,26 +11,28 @@
 
 <div class="container mt-5">
     <h2 class="text-center mb-4">Jogos Populares</h2>
+
     <div *ngIf="isLoading" class="text-center">
         <div class="spinner-border text-primary" role="status"></div>
         <p>Carregando jogos...</p>
     </div>
+
     <div *ngIf="!isLoading && popularGames.length > 0" class="row">
-        <div *ngFor="let game of popularGames" class="col-md-4 mb-4">
-            <div class="card h-100 shadow">
-                <img [src]="game.background_image" class="card-img-top" [alt]="game.name" />
+        <div *ngFor="let game of popularGames" class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img [src]="game.background_image" class="card-img-top img-fluid" [alt]="game.name"
+                    style="height: 200px; object-fit: cover;" />
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-truncate">{{ game.name }}</h5>
                     <p class="card-text">Rating: <strong>{{ game.rating }}</strong></p>
-                    <p class="card-text text-muted">Lançado em: {{ game.released }}</p>
-                    <a [routerLink]="['/game', game.id]" class="btn btn-primary w-100 mt-auto">
-                        Ver Detalhes
-                    </a>
+                    <p class="card-text">Lançado em: {{ formatarData(game.released) }}</p>
+                    <a [routerLink]="['/game', game.id]" class="btn btn-primary w-100 mt-auto">Ver Detalhes</a>
+
                 </div>
             </div>
         </div>
-
     </div>
+
     <div *ngIf="!isLoading && popularGames.length === 0" class="text-center">
         <p>Nenhum jogo encontrado no momento.</p>
     </div>

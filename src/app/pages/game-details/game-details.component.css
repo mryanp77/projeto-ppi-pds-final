@@ -1,0 +1,273 @@
+.game-details-container {
+    background-color: #121212;
+    color: white;
+    padding: 40px;
+  }
+  
+  .game-banner {
+    position: relative;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    margin-bottom: 30px;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+  }
+  
+  .game-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 2;
+  }
+  
+  .game-info h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .game-info .release-date,
+  .game-info .rating {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    font-weight: normal;
+  }
+  
+  .game-content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .game-description {
+    margin-bottom: 30px;
+  }
+  
+  .game-description h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .game-description p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .game-details {
+    margin-bottom: 30px;
+  }
+  
+  .detail-item {
+    margin-bottom: 15px;
+  }
+  
+  .detail-item strong {
+    font-size: 1.1rem;
+    color: #007bff;
+  }
+  
+  .detail-item p {
+    font-size: 1rem;
+  }
+  
+  .actions {
+    text-align: center;
+  }
+  
+  .actions .btn {
+    background-color: #007bff;
+    color: white;
+    font-size: 1.2rem;
+    padding: 12px 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .actions .btn:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    .game-info h1 {
+      font-size: 2rem;
+    }
+  
+    .game-info .release-date,
+    .game-info .rating {
+      font-size: 1rem;
+    }
+  
+    .game-content {
+      padding: 20px;
+    }
+  
+    .game-description h2 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .loading {
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+  }
+  
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: black;
+  }
+/* Estilo do Popup do Trailer */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8); /* Fundo escuro */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 90%; /* Limita a largura máxima da popup */
+    width: 80%; /* Define uma largura maior */
+    height: auto;
+    z-index: 9999;
+    text-align: center;
+  }
+  
+  .popup iframe {
+    width: 100%; /* O iframe ocupa toda a largura da popup */
+    height: 700px; /* Ajuste a altura conforme necessário */
+    border: none;
+  }
+  
+  .popup button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #f44336; /* Cor do botão (vermelho) */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .popup button:hover {
+    background-color: #d32f2f; /* Cor do botão ao passar o mouse */
+  }
+  
+  
+  
+  
+  
+  
+  .popup button:active {
+    background-color: #7f1e28; /* Ainda mais escuro */
+    transform: scale(0.95);
+  }
+  
+  
+  
+  /* Estilo do botão "Ver Trailer" */
+button {
+    background-color: #007bff; /* Azul vibrante */
+    color: white; /* Texto branco */
+    border: none; /* Remove bordas padrão */
+    border-radius: 5px; /* Cantos arredondados */
+    padding: 10px 20px; /* Espaçamento interno */
+    font-size: 16px; /* Tamanho da fonte */
+    font-weight: bold; /* Deixa o texto mais destacado */
+    cursor: pointer; /* Mostra a mãozinha ao passar o mouse */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  /* Efeito ao passar o mouse */
+  button:hover {
+    background-color: #0056b3; /* Azul mais escuro */
+    transform: scale(1.05); /* Leve aumento no tamanho */
+  }
+  
+  /* Efeito ao clicar */
+  button:active {
+    background-color: #004085; /* Azul ainda mais escuro */
+    transform: scale(0.95); /* Leve redução no tamanho */
+  }
+  
+  /* Estilo do Banner do Jogo */
+.game-banner {
+    position: relative;
+    width: 100%;
+    height: 400px; /* Ajuste o tamanho conforme necessário */
+    overflow: hidden; /* Garante que a imagem não saia da área do banner */
+  }
+  
+  .game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* A imagem cobre a área sem distorcer */
+    object-position: center center; /* Garante que o centro da imagem seja sempre exibido */
+  }
+  
+  .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)); /* Degradê do fundo */
+    z-index: 1;
+  }
+  
+  .game-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 2;
+    color: white;
+  }
+  
+  .game-info h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+  
+  .game-info .release-date,
+  .game-info .rating {
+    font-size: 18px;
+  }
+  

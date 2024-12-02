@@ -1,0 +1,65 @@
+<div class="game-details-container" *ngIf="game">
+    <!-- Banner do Jogo -->
+    <div class="game-banner">
+        <!-- Imagem do jogo -->
+        <img [src]="game.background_image_additional" alt="Banner do Jogo" class="game-image">
+        <div class="overlay"></div>
+        <div class="game-info">
+            <h1>{{ game.name }}</h1>
+            <p class="release-date">Lançado em: {{ formatarData(game.released) }}</p>
+            <p class="rating">Avaliação: {{ game.rating }} / 5</p>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="game-content">
+        <!-- Descrição do Jogo -->
+        <div class="game-description">
+            <h2>Descrição</h2>
+            <p [innerHTML]="game.description"></p>
+        </div>
+
+        <!-- Detalhes do Jogo -->
+        <div class="game-details">
+            <div class="detail-item">
+                <strong>Plataformas:</strong>
+                <p>{{ game.platforms | joinPlatforms }}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Gêneros:</strong>
+                <p>{{ game.genres | joinGenres }}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Desenvolvedor(es):</strong>
+                <p>{{ getFormattedDevelopers() }}</p>
+            </div>
+            <div class="detail-item">
+                <strong>Editora(s):</strong>
+                <p>{{ getFormattedPublishers() }}</p>
+            </div>
+        </div>
+
+        <!-- Trailer do Jogo -->
+        <div class="game-trailer">
+            <h2>Trailer do Jogo</h2>
+            <button (click)="abrirTrailer()">Ver Trailer</button>
+
+            <!-- Modal do Trailer -->
+            <div *ngIf="mostrarTrailer" class="popup">
+                <div *ngIf="trailerUrl; else noTrailer">
+                    <iframe width="1300" height="315" [src]="trailerUrl | safeUrl" frameborder="0" allowfullscreen>
+                    </iframe>
+                </div>
+                <ng-template #noTrailer>
+                    <p>Trailer não disponível.</p>
+                </ng-template>
+                <button (click)="fecharTrailer()">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Exibição de Loading -->
+<div *ngIf="isLoading" class="loading">
+    <p>Carregando...</p>
+</div>
