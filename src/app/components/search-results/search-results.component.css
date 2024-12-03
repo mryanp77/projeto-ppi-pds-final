@@ -1,0 +1,23 @@
+.container {
+    padding: 20px;
+  }
+  
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .game-card {
+    background: #333;
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .game-card img {
+    width: 100%;
+    border-radius: 10px;
+  }
+  

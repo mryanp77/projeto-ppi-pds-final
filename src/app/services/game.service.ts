@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class GameService {
   private API_URL = 'https://api.rawg.io/api';
-  private API_KEY = 'c3effaf7b27d42ec85e6e22357e9fec8';
+  private API_KEY = 'b07a5bb97c484fcba2b68d5d6e04b9ea';
 
   constructor(private http: HttpClient) { }
 
@@ -28,5 +28,9 @@ export class GameService {
     return this.http.get(`${this.API_URL}/games/${gameId}`, {
       params: { key: this.API_KEY },
     });
+  }
+
+  searchGames(query: string): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/games?search=${query}&key=${this.API_KEY}`);
   }
 }

@@ -1,0 +1,25 @@
+<div class="container mt-5">
+    <h2>Resultados para "{{ query }}"</h2>
+    <div *ngIf="loading">Carregando...</div>
+    <div *ngIf="!loading && results.length === 0">Nenhum jogo encontrado.</div>
+    <div *ngIf="!loading && results.length > 0" class="row">
+      <div *ngFor="let game of results" class="col-md-3 mb-4">
+        <div class="card h-100">
+          <img
+            [src]="game.background_image"
+            class="card-img-top"
+            [alt]="game.name"
+            onerror="this.src='default-image.png';"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ game.name }}</h5>
+            <p class="card-text">
+              Lançamento: {{ game.released || 'Data não disponível' }}
+            </p>
+            <a [routerLink]="'/game/' + game.id" class="btn btn-primary">Detalhes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

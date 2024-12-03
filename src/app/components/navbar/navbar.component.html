@@ -1,22 +1,66 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
+        <!-- Logotipo ou Nome -->
         <a class="navbar-brand" routerLink="/">GameCritic</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Sobre</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contato</a>
-                </li>
-            </ul>
+
+        <!-- Ícones na barra de navegação -->
+        <div class="navbar-icons ms-auto d-flex align-items-center">
+            <!-- Ícone de Casinha -->
+            <a class="nav-icon me-3" routerLink="/">
+                <i class="fas fa-home" title="Home"></i>
+            </a>
+
+            <!-- Ícone de Lupa -->
+            <div class="nav-icon me-3" id="search-icon" title="Pesquisar">
+                <i class="fas fa-search" (click)="toggleSearchBar()"></i>
+            </div>
+
+            <!-- Barra de Pesquisa -->
+            <div class="search-bar" id="search-bar" *ngIf="searchBarVisible">
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Pesquisar jogos..."
+                    [(ngModel)]="searchQuery"
+                    (input)="onSearchInput()"
+                    (keyup.enter)="searchGames()"
+                    (blur)="toggleSearchBar()"
+                />
+                <!-- Resultados Dinâmicos -->
+                <div class="search-results" *ngIf="searchResults.length > 0">
+                    <ul>
+                        <li
+                            *ngFor="let game of searchResults"
+                            (click)="navigateToGame(game.id)"
+                            class="search-result-item d-flex align-items-center"
+                        >
+                            <img
+                                [src]="game.background_image"
+                                alt="{{ game.name }}"
+                                class="result-image me-2"
+                            />
+                            <span>{{ game.name }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ícone de Bonequinho com Dropdown -->
+            <div class="dropdown">
+                <button
+                    class="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    id="userDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    <i class="fas fa-user" title="Usuário"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" routerLink="/register">Registrar</a></li>
+                    <li><a class="dropdown-item" routerLink="/login">Login</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
