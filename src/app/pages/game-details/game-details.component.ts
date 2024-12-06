@@ -25,25 +25,33 @@ export class GameDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private gameService: GameService,
-    private youtubeService: YoutubeService // Adicionando o serviço do YouTube
+    private youtubeService: YoutubeService
   ) {}
 
   ngOnInit(): void {
-    const gameId = this.route.snapshot.paramMap.get('id');
-    if (gameId) {
-      this.gameService.getGameDetails(gameId).subscribe({
-        next: (data) => {
-          console.log(data);
-          this.game = data;
-          this.isLoading = false;
-          this.buscarTrailer(); // Busca o trailer automaticamente
-        },
-        error: (error) => {
-          console.error('Erro ao carregar os detalhes do jogo: ', error);
-          this.isLoading = false;
-        },
-      });
-    }
+    // Escuta mudanças nos parâmetros da rota
+    this.route.params.subscribe((params) => {
+      const gameId = params['id'];
+      if (gameId) {
+        this.carregarDetalhesDoJogo(gameId);
+      }
+    });
+  }
+
+  carregarDetalhesDoJogo(gameId: string): void {
+    this.isLoading = true; // Reseta o estado de carregamento
+    this.gameService.getGameDetails(gameId).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.game = data;
+        this.isLoading = false;
+        this.buscarTrailer(); // Busca o trailer automaticamente
+      },
+      error: (error) => {
+        console.error('Erro ao carregar os detalhes do jogo: ', error);
+        this.isLoading = false;
+      },
+    });
   }
 
   abrirTrailer(): void {
@@ -54,18 +62,17 @@ export class GameDetailsComponent implements OnInit {
     this.mostrarTrailer = false;
   }
 
-  // Método para buscar o trailer no YouTube
   buscarTrailer(): void {
     if (this.game?.name) {
       const gameName = this.game.name + ' trailer';
       this.youtubeService.getTrailer(gameName).subscribe({
         next: (response: any) => {
-          const video = response.items[0]; // Pega o primeiro vídeo retornado
+          const video = response.items[0];
           this.trailerUrl = `https://www.youtube.com/embed/${video.id.videoId}`;
         },
         error: (error) => {
           console.error('Erro ao buscar o trailer no YouTube: ', error);
-          this.trailerUrl = null; // Não disponível
+          this.trailerUrl = null;
         },
       });
     }
