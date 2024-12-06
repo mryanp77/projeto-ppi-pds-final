@@ -89,3 +89,11 @@
 .dropdown-menu {
   z-index: 1050;
 }
+
+.fa-search:hover {
+  cursor: pointer;
+}
+
+.fa-home {
+  color: #fff;
+}
