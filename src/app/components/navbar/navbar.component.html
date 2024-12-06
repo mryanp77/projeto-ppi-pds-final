@@ -24,10 +24,9 @@
                     [(ngModel)]="searchQuery"
                     (input)="onSearchInput()"
                     (keyup.enter)="searchGames()"
-                    (blur)="toggleSearchBar()"
                 />
                 <!-- Resultados Dinâmicos -->
-                <div class="search-results" *ngIf="searchResults.length > 0">
+                <div class="search-results" id="search-results" *ngIf="searchResults.length > 0">
                     <ul>
                         <li
                             *ngFor="let game of searchResults"

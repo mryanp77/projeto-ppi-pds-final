@@ -55,14 +55,17 @@ export class NavbarComponent {
     const targetElement = event.target as HTMLElement;
     const searchBar = document.getElementById('search-bar');
     const searchIcon = document.getElementById('search-icon');
+    const searchResults = document.getElementById('search-results');
 
-    // Verifica se o clique foi fora da barra de pesquisa e do ícone de lupa
+    // Verifica se o clique foi fora da barra de pesquisa, do ícone de lupa e dos resultados
     if (
       this.searchBarVisible &&
       searchBar &&
       !searchBar.contains(targetElement) &&
       searchIcon &&
-      !searchIcon.contains(targetElement)
+      !searchIcon.contains(targetElement) &&
+      searchResults &&
+      !searchResults.contains(targetElement)
     ) {
       this.toggleSearchBar();
     }
