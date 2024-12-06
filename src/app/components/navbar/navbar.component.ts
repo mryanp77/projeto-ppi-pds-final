@@ -8,13 +8,17 @@ import { GameService } from '../../services/game.service';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent {
-  searchBarVisible: boolean = false; // Controla a visibilidade da barra de pesquisa
-  searchQuery: string = ''; // Termo digitado na barra de pesquisa
-  searchResults: any[] = []; // Resultados da API
+  searchBarVisible: boolean = false;
+  searchQuery: string = '';
+  searchResults: any[] = [];
+  isDropdownOpen = false;
 
   constructor(private gameService: GameService, private router: Router) {}
 
-  // Exibir/Ocultar barra de pesquisa
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
   toggleSearchBar() {
     this.searchBarVisible = !this.searchBarVisible;
     if (!this.searchBarVisible) {
@@ -23,12 +27,11 @@ export class NavbarComponent {
     }
   }
 
-  // Buscar jogos enquanto o usuário digita
   onSearchInput() {
     if (this.searchQuery.trim()) {
       this.gameService.searchGames(this.searchQuery).subscribe(
         (response) => {
-          this.searchResults = response.results.slice(0, 5); // Exibir no máximo 5 resultados
+          this.searchResults = response.results.slice(0, 5);
         },
         (error) => console.error('Erro ao buscar jogos:', error)
       );
@@ -37,19 +40,18 @@ export class NavbarComponent {
     }
   }
 
-  // Navegar para página de detalhes do jogo
   navigateToGame(gameId: number) {
     this.router.navigate([`/game/${gameId}`]);
     this.toggleSearchBar();
   }
 
-  // Redirecionar para a página de resultados de pesquisa
   searchGames() {
-    this.toggleSearchBar(); // Fechar barra de pesquisa
-    this.router.navigate(['/search-results'], { queryParams: { query: this.searchQuery } });
+    this.toggleSearchBar();
+    this.router.navigate(['/search-results'], {
+      queryParams: { query: this.searchQuery },
+    });
   }
 
-  // Detectar clique fora da barra de pesquisa
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const targetElement = event.target as HTMLElement;
@@ -57,7 +59,6 @@ export class NavbarComponent {
     const searchIcon = document.getElementById('search-icon');
     const searchResults = document.getElementById('search-results');
 
-    // Verifica se o clique foi fora da barra de pesquisa, do ícone de lupa e dos resultados
     if (
       this.searchBarVisible &&
       searchBar &&

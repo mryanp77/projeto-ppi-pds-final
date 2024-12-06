@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'joinGenres'
+  name: 'joinGenres',
 })
 export class JoinGenresPipe implements PipeTransform {
   transform(value: any[]): string {

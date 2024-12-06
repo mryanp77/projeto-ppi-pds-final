@@ -2,18 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { GameService } from '../../services/game.service';
 import { DatePipe } from '@angular/common';
 
-
 @Component({
   selector: 'app-popular-games',
   templateUrl: './popular-games.component.html',
-  styleUrl: './popular-games.component.css'
+  styleUrl: './popular-games.component.css',
 })
-
 export class PopularGamesComponent implements OnInit {
   popularGames: any[] = [];
   isLoading = true;
 
-  constructor(private gameService: GameService, private datePipe: DatePipe) { }
+  constructor(private gameService: GameService, private datePipe: DatePipe) {}
 
   ngOnInit(): void {
     this.gameService.getPopularGames().subscribe({

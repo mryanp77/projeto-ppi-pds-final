@@ -1,161 +1,161 @@
 html,
 body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 app-root {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .content {
-    flex: 1;
+  flex: 1;
 }
 
 h2 {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .card {
-    transition: transform 0.2s;
+  transition: transform 0.2s;
 }
 
 .card:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .card-title {
-    font-size: 1.2rem;
+  font-size: 1.2rem;
 }
 
 .spinner-border {
-    width: 3rem;
-    height: 3rem;
+  width: 3rem;
+  height: 3rem;
 }
 
 @media (max-width: 768px) {
-    .welcome-section h1 {
-        font-size: 2rem;
-    }
+  .welcome-section h1 {
+    font-size: 2rem;
+  }
 
-    .welcome-section p {
-        font-size: 1rem;
-    }
+  .welcome-section p {
+    font-size: 1rem;
+  }
 
-    .welcome-section .btn {
-        font-size: 1rem;
-    }
+  .welcome-section .btn {
+    font-size: 1rem;
+  }
 }
 
 body {
-    background-color: #121212 !important;
-    color: #fff !important;
-    margin: 0;
-    font-family: 'Arial', sans-serif;
+  background-color: #121212 !important;
+  color: #fff !important;
+  margin: 0;
+  font-family: "Arial", sans-serif;
 }
 
 .navbar,
 footer {
-    background-color: #1c1c1c !important;
-    color: #fff !important;
+  background-color: #1c1c1c !important;
+  color: #fff !important;
 }
 
 .welcome-section {
-    background-image: url('https://images.unsplash.com/photo-1507457379470-08b800bebc67?q=80&w=2109&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') !important;
-    background-size: cover !important;
-    background-position: center center !important;
-    position: relative;
-    padding: 50px 0;
+  background-image: url("https://images.unsplash.com/photo-1507457379470-08b800bebc67?q=80&w=2109&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  position: relative;
+  padding: 50px 0;
 }
 
 .welcome-section .overlay {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }
 
 .welcome-section .content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    color: #fff !important;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff !important;
 }
 
 .welcome-section .btn {
-    margin-top: 20px !important;
-    background-color: #007bff !important;
-    border: none !important;
+  margin-top: 20px !important;
+  background-color: #007bff !important;
+  border: none !important;
 }
 
 .welcome-section .btn:hover {
-    background-color: #0056b3 !important;
+  background-color: #0056b3 !important;
 }
 
 .container {
-    padding: 20px 0 !important;
+  padding: 20px 0 !important;
 }
 
 .card {
-    background-color: #2c2c2c;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
+  background-color: #2c2c2c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
 }
 
 .card-body {
-    background-color: #2c2c2c !important;
-    color: #fff;
-    padding: 20px;
+  background-color: #2c2c2c !important;
+  color: #fff;
+  padding: 20px;
 }
 
 .card-title {
-    color: #fff !important;
-    font-size: 1.25rem;
-    font-weight: bold;
+  color: #fff !important;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
 .card-text {
-    color: #dcdcdc !important;
-    font-size: 1rem;
+  color: #dcdcdc !important;
+  font-size: 1rem;
 }
 
 .card-text small {
-    color: #fff !important;
+  color: #fff !important;
 }
 
 .card-footer {
-    background-color: #1c1c1c;
-    color: #fff;
+  background-color: #1c1c1c;
+  color: #fff;
 }
 
 .card-img-top {
-    border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 
 .card:hover {
-    background-color: #444444;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+  background-color: #444444;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .card .btn {
-    color: #fff;
-    background-color: #007bff;
-    border: none;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
 }
 
 .card .btn:hover {
-    background-color: #0056b3;
-    color: #fff;
+  background-color: #0056b3;
+  color: #fff;
 }
 
 .card .card-body {
-    color: #fff;
+  color: #fff;
 }

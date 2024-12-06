@@ -7,12 +7,12 @@ import { SearchResultsComponent } from './components/search-results/search-resul
 const routes: Routes = [
   { path: '', component: PopularGamesComponent },
   { path: 'game/:id', component: GameDetailsComponent },
-  { path: 'search-results', component: SearchResultsComponent }, 
+  { path: 'search-results', component: SearchResultsComponent },
   { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

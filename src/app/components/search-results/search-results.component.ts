@@ -12,7 +12,10 @@ export class SearchResultsComponent implements OnInit {
   results: any[] = [];
   loading: boolean = false;
 
-  constructor(private route: ActivatedRoute, private gameService: GameService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private gameService: GameService
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -23,7 +26,6 @@ export class SearchResultsComponent implements OnInit {
     });
   }
 
-  // Chama a API para buscar jogos
   fetchSearchResults(): void {
     this.loading = true;
     this.gameService.searchGames(this.query).subscribe(
