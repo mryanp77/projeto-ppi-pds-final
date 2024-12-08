@@ -1,22 +1,40 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameService } from '../../services/game.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   searchBarVisible: boolean = false;
   searchQuery: string = '';
   searchResults: any[] = [];
-  isDropdownOpen = false;
+  isDropdownOpen: boolean = false;
+  isLoggedIn: boolean = false;
 
-  constructor(private gameService: GameService, private router: Router) {}
+  constructor(
+    private gameService: GameService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit() {
+    // Subscribing to authentication status changes
+    this.authService.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
+  }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  logout() {
+    this.authService.logout(); // Calls the centralized logout logic
+    this.router.navigate(['/login']); // Redirects to the login page
   }
 
   toggleSearchBar() {
