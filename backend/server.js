@@ -39,6 +39,24 @@ app.post('/api/login', (req, res) => {
 });
 
 
+// ===================== Rota para obter o nome do usuário logado ====================
+app.get('/api/user/:email', (req, res) => {
+    const { email } = req.params;
+    const query = 'SELECT username FROM users WHERE email = ?';
+    db.query(query, [email], (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar nome do usuário:', err);
+            res.status(500).json({ error: 'Erro ao buscar nome do usuário.' });
+        } else if (results.length > 0) {
+            res.status(200).json({ username: results[0].username });
+        } else {
+            res.status(404).json({ error: 'Usuário não encontrado.' });
+        }
+    });
+});
+
+
+
 
 
 const PORT = 3000;

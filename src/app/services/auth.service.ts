@@ -6,13 +6,22 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(this.checkLoginStatus());
+  private checkLoginStatus(): boolean {
+    return localStorage.getItem('isLoggedIn') === 'true';
+  }
 
   isLoggedIn$ = this.loggedIn.asObservable();
 
   constructor() {}
 
-  login() {
+  // login() {
+  //   localStorage.setItem('isLoggedIn', 'true');
+  //   this.loggedIn.next(true);
+  // }
+  
+  login(email: string) {
     localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userEmail', email); // Armazena o email do usuário logado
     this.loggedIn.next(true);
   }
 
@@ -21,7 +30,6 @@ export class AuthService {
     this.loggedIn.next(false);
   }
 
-  private checkLoginStatus(): boolean {
-    return localStorage.getItem('isLoggedIn') === 'true';
-  }
+  
+
 }

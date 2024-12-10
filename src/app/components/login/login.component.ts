@@ -14,16 +14,30 @@ export class LoginComponent {
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
+  // login() {
+  //   const credentials = { email: this.email, password: this.password };
+
+  //   this.http.post('http://localhost:3000/api/login', credentials).subscribe({
+  //     next: (response: any) => {
+  //       alert('Login bem-sucedido!');
+  //       this.authService.login(); // Atualiza o estado global de autenticação
+  //       this.router.navigate(['/']); // Redireciona para a página inicial
+  //     },
+  //     error: (err) => alert('Erro ao fazer login: ' + err.message)
+  //   });
+  // }
+
   login() {
     const credentials = { email: this.email, password: this.password };
-
+  
     this.http.post('http://localhost:3000/api/login', credentials).subscribe({
       next: (response: any) => {
         alert('Login bem-sucedido!');
-        this.authService.login(); // Atualiza o estado global de autenticação
+        this.authService.login(this.email); // Passa o email para o serviço de autenticação
         this.router.navigate(['/']); // Redireciona para a página inicial
       },
       error: (err) => alert('Erro ao fazer login: ' + err.message)
     });
   }
+  
 }

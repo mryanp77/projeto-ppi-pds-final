@@ -5,6 +5,7 @@ import { GameDetailsComponent } from './pages/game-details/game-details.componen
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
   { path: '', component: PopularGamesComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'search-results', component: SearchResultsComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: '**', redirectTo: '' },
 ];
 
