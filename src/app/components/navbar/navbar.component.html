@@ -42,6 +42,7 @@
         </div>
       </div>
 
+      <!-- Dropdown de usuário -->
       <div class="dropdown ms-3" [ngClass]="{ show: isDropdownOpen }">
         <button
           class="btn btn-secondary dropdown-toggle"
@@ -56,29 +57,26 @@
           class="dropdown-menu dropdown-menu-end"
           aria-labelledby="userDropdown"
         >
-          <li *ngIf="!isLoggedIn">
-            <a class="dropdown-item" routerLink="/register">
-              <i class="fas fa-user-plus me-2"></i>Registrar
-            </a>
-          </li>
-          <li *ngIf="!isLoggedIn">
-            <a class="dropdown-item" routerLink="/login">
-              <i class="fas fa-sign-in-alt me-2"></i>Login
-            </a>
-          </li>
+          <!-- Exibe o perfil e sair apenas se o usuário estiver logado -->
           <li *ngIf="isLoggedIn">
             <a class="dropdown-item" routerLink="/profile">
               <i class="fas fa-user me-2"></i>Meu Perfil
             </a>
           </li>
           <li *ngIf="isLoggedIn">
-            <a class="dropdown-item" routerLink="/settings">
-              <i class="fas fa-cog me-2"></i>Configurações
-            </a>
-          </li>
-          <li *ngIf="isLoggedIn">
             <a class="dropdown-item" href="#" (click)="logout()">
               <i class="fas fa-sign-out-alt me-2"></i>Sair
+            </a>
+          </li>
+          <!-- Exibe os botões de login e registrar apenas se o usuário NÃO estiver logado -->
+          <li *ngIf="!isLoggedIn">
+            <a class="dropdown-item" routerLink="/login">
+              <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+          </li>
+          <li *ngIf="!isLoggedIn">
+            <a class="dropdown-item" routerLink="/register">
+              <i class="fas fa-user-plus me-2"></i>Registrar
             </a>
           </li>
         </ul>

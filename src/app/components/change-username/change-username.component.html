@@ -1,0 +1,33 @@
+<div class="container mt-5">
+    <h2>Alterar Nome de Usuário</h2>
+    <form (ngSubmit)="onSubmit()" #usernameForm="ngForm">
+      <div class="form-group">
+        <label for="newUsername">Novo Nome de Usuário</label>
+        <input
+          type="text"
+          id="newUsername"
+          class="form-control"
+          [(ngModel)]="newUsername"
+          name="newUsername"
+          required
+        />
+      </div>
+  
+      <div class="form-group mt-3">
+        <label for="password">Senha</label>
+        <input
+          type="password"
+          id="password"
+          class="form-control"
+          [(ngModel)]="password"
+          name="password"
+          required
+        />
+      </div>
+  
+      <button type="submit" class="btn btn-primary mt-3" [disabled]="!usernameForm.form.valid">
+        Alterar Nome de Usuário
+      </button>
+    </form>
+  </div>
+  

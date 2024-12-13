@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const db = require('./db');
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
+
 // ================= Rota para registrar usuário ===================
 app.post('/api/register', (req, res) => {
     const { username, email, password } = req.body;
@@ -20,28 +22,54 @@ app.post('/api/register', (req, res) => {
     });
 });
 
-
 // ========================= Rota para login ================================
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
     const query = 'SELECT * FROM users WHERE email = ? AND password = ?';
+    
+    // Verifica as credenciais do usuário no banco de dados
     db.query(query, [email, password], (err, results) => {
         if (err) {
             console.error('Erro ao fazer login:', err);
-            res.status(500).json({ error: 'Erro ao fazer login.' });
-        } else if (results.length > 0) {
-            res.status(200).json({ message: 'Login bem-sucedido!' });
+            return res.status(500).json({ error: 'Erro ao fazer login.' });
+        }
+
+        // Se as credenciais forem válidas
+        if (results.length > 0) {
+            const user = results[0]; // O primeiro usuário encontrado
+
+            // Atualiza o campo last_login para o momento atual
+            const updateLoginQuery = 'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE email = ?';
+            db.query(updateLoginQuery, [email], (err, updateResult) => {
+                if (err) {
+                    console.error('Erro ao atualizar o last_login:', err);
+                    return res.status(500).json({ error: 'Erro ao atualizar o último login.' });
+                }
+                
+                // Retorna as informações do usuário, incluindo data de registro e último login
+                res.status(200).json({
+                    message: 'Login bem-sucedido!',
+                    user: {
+                        username: user.username,
+                        email: user.email,
+                        createdAt: user.created_at,   // Data de registro
+                        lastLogin: user.last_login    // Último login
+                    }
+                });
+            });
         } else {
+            // Se as credenciais forem inválidas
             res.status(401).json({ error: 'Credenciais inválidas.' });
         }
     });
 });
 
 
+
 // ===================== Rota para obter o nome do usuário logado ====================
 app.get('/api/user/:email', (req, res) => {
     const { email } = req.params;
-    const query = 'SELECT username, email FROM users WHERE email = ?';  // Certifique-se de que o email está sendo retornado
+    const query = 'SELECT username, email FROM users WHERE email = ?';
     db.query(query, [email], (err, results) => {
         if (err) {
             console.error('Erro ao buscar dados do usuário:', err);
@@ -49,7 +77,7 @@ app.get('/api/user/:email', (req, res) => {
         } else if (results.length > 0) {
             res.status(200).json({
                 username: results[0].username,
-                email: results[0].email  // Inclua o email na resposta
+                email: results[0].email
             });
         } else {
             res.status(404).json({ error: 'Usuário não encontrado.' });
@@ -57,14 +85,10 @@ app.get('/api/user/:email', (req, res) => {
     });
 });
 
-
 // ===================== Rota para atualizar o usuário ====================
 app.put('/api/user/:email', (req, res) => {
-<<<<<<< HEAD
     const { email } = req.params; // Email atual no parâmetro
     const { username, newEmail, password } = req.body; // Dados enviados pelo cliente
-
-    console.log('Requisição recebida:', { email, body: req.body });
 
     // Validar se pelo menos um campo foi enviado
     if (!username && !newEmail && !password) {
@@ -75,83 +99,6 @@ app.put('/api/user/:email', (req, res) => {
     if (newEmail && newEmail.trim() === email) {
         return res.status(400).json({ error: 'O novo email não pode ser o mesmo que o atual.' });
     }
-
-    // Função para atualizar o usuário no banco
-    const updateUser = (currentEmail, fieldsToUpdate, res) => {
-        const updates = [];
-        const params = [];
-
-        // Monta a query com base nos campos enviados
-        if (fieldsToUpdate.username) {
-            updates.push('username = ?');
-            params.push(fieldsToUpdate.username);
-        }
-        if (fieldsToUpdate.newEmail) {
-            updates.push('email = ?');
-            params.push(fieldsToUpdate.newEmail);
-        }
-        if (fieldsToUpdate.password) {
-            updates.push('password = ?');
-            params.push(fieldsToUpdate.password);
-        }
-        params.push(currentEmail); // Email atual para a cláusula WHERE
-
-        const updateQuery = `UPDATE users SET ${updates.join(', ')} WHERE email = ?`;
-
-        db.query(updateQuery, params, (err, results) => {
-            if (err) {
-                console.error('Erro ao atualizar usuário:', err);
-                return res.status(500).json({ error: 'Erro ao atualizar o usuário.' });
-            }
-=======
-    const { email } = req.params; // Obtém o e-mail do parâmetro da URL
-    const { username, newEmail, password } = req.body; // Obtém os dados atualizados do corpo da requisição
-
-    // Verificar se username e newEmail estão preenchidos
-    if (!username || !newEmail || !password) {
-        return res.status(400).json({ error: 'Nome de usuário, email e senha são obrigatórios!' });
-    }
-
-    // Verifica se o novo email não está vazio
-    if (newEmail.trim() === '') {
-        return res.status(400).json({ error: 'Email não pode ser vazio!' });
-    }
-
-    // Verifica se o novo email é diferente do email atual
-    if (newEmail === email) {
-        return res.status(400).json({ error: 'O novo email não pode ser o mesmo que o atual!' });
-    }
-
-    // Verificar se o email já existe no banco de dados (verificação de duplicidade)
-    const checkEmailQuery = 'SELECT COUNT(*) AS count FROM users WHERE email = ?';
-    db.query(checkEmailQuery, [newEmail], (err, result) => {
-        if (err) {
-            console.error('Erro ao verificar o email no banco:', err);
-            return res.status(500).json({ error: 'Erro ao verificar o email.' });
-        }
-
-        // Se já existir um usuário com o mesmo email, retornar erro
-        if (result[0].count > 0) {
-            return res.status(400).json({ error: 'Este email já está em uso.' });
-        }
-
-        // Atualiza os dados do usuário no banco de dados
-        const updateQuery = 'UPDATE users SET username = ?, email = ?, password = ? WHERE email = ?';
-        db.query(updateQuery, [username, newEmail, password, email], (err, results) => {
-            if (err) {
-                console.error('Erro ao atualizar o usuário:', err);
-                return res.status(500).json({ error: 'Erro ao atualizar o usuário.' });
-            }
-
->>>>>>> 02f110e53c459f29b63c88c0f667078fbc5f63a9
-            if (results.affectedRows > 0) {
-                res.status(200).json({ message: 'Usuário atualizado com sucesso.' });
-            } else {
-                res.status(404).json({ error: 'Usuário não encontrado.' });
-            }
-        });
-<<<<<<< HEAD
-    };
 
     // Verifica duplicidade de email se newEmail for fornecido
     if (newEmail) {
@@ -174,7 +121,6 @@ app.put('/api/user/:email', (req, res) => {
         updateUser(email, { username, password }, res);
     }
 });
-
 
 // Função para atualizar dinamicamente o usuário
 function updateUser(email, fieldsToUpdate, res) {
@@ -207,18 +153,43 @@ function updateUser(email, fieldsToUpdate, res) {
 
 
 
-=======
+
+// CHANGE USERNAME
+// ========================= Rota para alterar o nome de usuário ================================
+app.post('/api/change-username', (req, res) => {
+    const { email, password, newUsername } = req.body;
+
+    // Verifica se o email e senha correspondem ao usuário
+    const query = 'SELECT * FROM users WHERE email = ? AND password = ?';
+    db.query(query, [email, password], (err, results) => {
+        if (err) {
+            console.error('Erro ao verificar as credenciais:', err);
+            return res.status(500).json({ error: 'Erro ao verificar as credenciais.' });
+        }
+
+        if (results.length > 0) {
+            // Atualiza o nome de usuário no banco de dados
+            const updateQuery = 'UPDATE users SET username = ? WHERE email = ?';
+            db.query(updateQuery, [newUsername, email], (err, updateResult) => {
+                if (err) {
+                    console.error('Erro ao atualizar o nome de usuário:', err);
+                    return res.status(500).json({ error: 'Erro ao atualizar o nome de usuário.' });
+                }
+
+                res.status(200).json({ message: 'Nome de usuário alterado com sucesso!' });
+            });
+        } else {
+            res.status(401).json({ error: 'Credenciais inválidas.' });
+        }
     });
 });
 
 
->>>>>>> 02f110e53c459f29b63c88c0f667078fbc5f63a9
 
 
 
 
-
-
+// Inicialização do servidor
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}.`);
