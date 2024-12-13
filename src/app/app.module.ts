@@ -19,6 +19,8 @@ import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ChangeUsernameComponent } from './components/change-username/change-username.component';
+import { ChangeEmailComponent } from './components/change-email/change-email.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -39,6 +41,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     ProfileComponent,
     ChangeUsernameComponent,
+    ChangeEmailComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     BrowserModule,

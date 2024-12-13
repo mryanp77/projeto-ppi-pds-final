@@ -29,8 +29,11 @@ export class AuthService {
 
   // Faz o logout e remove as informações armazenadas
   logout() {
+    // Remove informações do usuário armazenadas localmente
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userEmail');
+    
+    // Atualiza o BehaviorSubject
     this.loggedIn.next(false);
   }
 
@@ -58,4 +61,35 @@ export class AuthService {
       throw new Error('Usuário não encontrado.');
     }
   }
+
+  // Altera o email do usuário no banco de dados após verificar a senha
+  changeEmail(newEmail: string, password: string): Observable<any> {
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
+      const userData = {
+        email: userEmail,
+        password: password,
+        newEmail: newEmail,
+      };
+      return this.http.post(`${this.apiUrl}/change-email`, userData);
+    } else {
+      throw new Error('Usuário não encontrado.');
+    }
+  }
+
+
+
+  changePassword(currentPassword: string, newPassword: string) {
+    const email = localStorage.getItem('userEmail'); // Obtem o email do usuário logado
+    if (!email) {
+      throw new Error('Usuário não autenticado.');
+    }
+  
+    return this.http.put(`${this.apiUrl}/change-password`, {
+      email,
+      currentPassword,
+      newPassword
+    });
+  }
+  
 }

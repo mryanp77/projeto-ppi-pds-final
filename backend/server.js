@@ -188,6 +188,69 @@ app.post('/api/change-username', (req, res) => {
 
 
 
+// CHANGE EMAIL
+app.post('/api/change-email', (req, res) => {
+    const { email, password, newEmail } = req.body;
+
+    // Verifica se o email e senha correspondem ao usuário
+    const query = 'SELECT * FROM users WHERE email = ? AND password = ?';
+    db.query(query, [email, password], (err, results) => {
+        if (err) {
+            console.error('Erro ao verificar as credenciais:', err);
+            return res.status(500).json({ error: 'Erro ao verificar as credenciais.' });
+        }
+
+        if (results.length > 0) {
+            // Atualiza o email no banco de dados
+            const updateQuery = 'UPDATE users SET email = ? WHERE email = ?';
+            db.query(updateQuery, [newEmail, email], (err, updateResult) => {
+                if (err) {
+                    console.error('Erro ao atualizar o email:', err);
+                    return res.status(500).json({ error: 'Erro ao atualizar o email.' });
+                }
+
+                res.status(200).json({ message: 'Email alterado com sucesso!' });
+            });
+        } else {
+            res.status(401).json({ error: 'Credenciais inválidas.' });
+        }
+    });
+});
+  
+
+
+
+
+// CHANGE PASSWORD
+app.put('/api/change-password', (req, res) => {
+    const { email, currentPassword, newPassword } = req.body;
+  
+    const query = 'SELECT password FROM users WHERE email = ?';
+    db.query(query, [email], (err, results) => {
+      if (err) {
+        console.error('Erro ao buscar senha:', err);
+        return res.status(500).json({ error: 'Erro interno do servidor.' });
+      }
+  
+      if (results.length === 0 || results[0].password !== currentPassword) {
+        return res.status(401).json({ error: 'Senha atual incorreta.' });
+      }
+  
+      const updateQuery = 'UPDATE users SET password = ? WHERE email = ?';
+      db.query(updateQuery, [newPassword, email], (err) => {
+        if (err) {
+          console.error('Erro ao atualizar senha:', err);
+          return res.status(500).json({ error: 'Erro ao atualizar a senha.' });
+        }
+  
+        res.status(200).json({ message: 'Senha alterada com sucesso!' });
+      });
+    });
+  });
+  
+
+
+
 
 // Inicialização do servidor
 const PORT = 3000;

@@ -7,6 +7,8 @@ import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ChangeUsernameComponent } from './components/change-username/change-username.component';
+import { ChangeEmailComponent } from './components/change-email/change-email.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 const routes: Routes = [
   { path: '', component: PopularGamesComponent },
@@ -16,6 +18,8 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'change-username', component: ChangeUsernameComponent },
+  { path: 'change-email', component: ChangeEmailComponent },
+  { path: 'change-password', component: ChangePasswordComponent },
   { path: '**', redirectTo: '' },
 ];
 
