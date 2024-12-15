@@ -252,6 +252,58 @@ app.put('/api/change-password', (req, res) => {
 
 
 
+// Rota para salvar uma lista
+app.post('/api/lists', (req, res) => {
+    const { name, description, games } = req.body;
+  
+    // Insere a lista no banco
+    db.query('INSERT INTO lists (name, description) VALUES (?, ?)', [name, description], (err, result) => {
+      if (err) {
+        console.error('Erro ao inserir lista:', err);
+        return res.status(500).send('Erro ao salvar a lista.');
+      }
+  
+      const listId = result.insertId;
+  
+      // Insere os jogos associados à lista
+      const gameValues = games.map((game) => [listId, game.id, game.name, game.background_image]);
+  
+      db.query(
+        'INSERT INTO list_games (list_id, game_id, game_name, background_image) VALUES ?',
+        [gameValues],
+        (err) => {
+          if (err) {
+            console.error('Erro ao inserir jogos:', err);
+            return res.status(500).send('Erro ao salvar os jogos da lista.');
+          }
+  
+          res.status(200).json({ message: 'Lista salva com sucesso!' });
+        }
+      );
+    });
+  });
+
+
+
+
+
+// Rota para listar todas as listas
+app.get('/api/lists', (req, res) => {
+    db.query('SELECT * FROM lists', (err, results) => {
+      if (err) {
+        console.error('Erro ao buscar listas:', err);
+        return res.status(500).send('Erro ao buscar listas.');
+      }
+  
+      res.status(200).json(results);
+    });
+  });
+
+
+
+
+
+
 // Inicialização do servidor
 const PORT = 3000;
 app.listen(PORT, () => {

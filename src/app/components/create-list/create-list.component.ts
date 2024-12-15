@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { GameService } from '../../services/game.service';
+import { ListService } from '../../services/list.service';
 
 @Component({
   selector: 'app-create-list',
@@ -8,11 +9,12 @@ import { GameService } from '../../services/game.service';
 })
 export class CreateListComponent {
   listName: string = ''; // Nome da lista
+  listDescription: string = ''; // Descrição da lista
   searchQuery: string = ''; // Pesquisa na barra
   searchResults: any[] = []; // Resultados da busca
   addedGames: any[] = []; // Jogos adicionados à lista
 
-  constructor(private gameService: GameService) {}
+  constructor(private gameService: GameService, private listService: ListService) {}
 
   // Atualiza a lista de resultados conforme o usuário digita
   onSearchInput() {
@@ -41,23 +43,30 @@ export class CreateListComponent {
     this.addedGames = this.addedGames.filter((addedGame) => addedGame.id !== game.id);
   }
 
-  // Salva a lista
   saveList() {
-    if (this.listName && this.addedGames.length > 0) {
+    if (this.listName && this.listDescription && this.addedGames.length > 0) {
       const newList = {
         name: this.listName,
+        description: this.listDescription,
         games: this.addedGames,
       };
 
-      // Simula o envio da lista para o backend
-      console.log('Lista salva:', newList);
-
-      // Limpa os campos após salvar
-      this.listName = '';
-      this.addedGames = [];
-      this.searchQuery = '';
-      this.searchResults = [];
-      alert('Lista salva com sucesso!');
+      this.listService.saveList(newList).subscribe(
+        () => {
+          alert('Lista salva com sucesso!');
+          this.listName = '';
+          this.listDescription = '';
+          this.addedGames = [];
+          this.searchQuery = '';
+          this.searchResults = [];
+        },
+        (error) => {
+          console.error('Erro ao salvar lista:', error);
+          alert('Erro ao salvar a lista. Tente novamente.');
+        }
+      );
+    } else {
+      alert('Preencha todos os campos obrigatórios!');
     }
   }
 }

@@ -13,6 +13,18 @@
       />
     </div>
   
+    <!-- Campo para a descrição da lista -->
+    <div class="form-group">
+      <label for="list-description">Descrição:</label>
+      <textarea
+        id="list-description"
+        class="form-control"
+        rows="3"
+        placeholder="Digite uma descrição para sua lista..."
+        [(ngModel)]="listDescription"
+      ></textarea>
+    </div>
+  
     <!-- Barra de pesquisa para adicionar jogos -->
     <div class="search-bar mt-3">
       <label for="game-search">Pesquisar Jogos:</label>
@@ -78,7 +90,7 @@
     <div class="save-list mt-4">
       <button
         class="btn btn-primary"
-        [disabled]="!listName || addedGames.length === 0"
+        [disabled]="!listName || !listDescription || addedGames.length === 0"
         (click)="saveList()"
       >
         Salvar Lista
