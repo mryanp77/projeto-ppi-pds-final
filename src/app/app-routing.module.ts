@@ -9,6 +9,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ChangeUsernameComponent } from './components/change-username/change-username.component';
 import { ChangeEmailComponent } from './components/change-email/change-email.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { CreateListComponent } from './components/create-list/create-list.component';
 
 const routes: Routes = [
   { path: '', component: PopularGamesComponent },
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'change-username', component: ChangeUsernameComponent },
   { path: 'change-email', component: ChangeEmailComponent },
   { path: 'change-password', component: ChangePasswordComponent },
+  { path: 'create-list', component: CreateListComponent },
   { path: '**', redirectTo: '' },
 ];
 

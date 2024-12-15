@@ -1,0 +1,72 @@
+.create-list-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .search-bar {
+    position: relative;
+    margin-top: 10px;
+  }
+  
+  .search-results {
+    position: absolute;
+    background: #444444; /* Cor de fundo da lista de resultados */
+    border: 1px solid #333333; /* Bordas mais escuras para contraste */
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    width: 100%;
+    z-index: 10;
+  }
+  
+  .search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    color: #ffffff; /* Cor do texto */
+  }
+  
+  .search-result-item:hover {
+    background: #555555; /* Cor de fundo ao passar o mouse */
+  }
+  
+  .result-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+  
+  .game-name {
+    flex-grow: 1;
+    margin-left: 10px;
+    font-size: 14px;
+  }
+  
+  .btn-add-game {
+    margin-left: 10px;
+  }
+  
+  .added-games {
+    margin-top: 20px;
+  }
+  
+  .added-game-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .save-list button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
