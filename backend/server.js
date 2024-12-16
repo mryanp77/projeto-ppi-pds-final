@@ -265,23 +265,54 @@ app.post('/api/lists', (req, res) => {
   
       const listId = result.insertId;
   
-      // Insere os jogos associados à lista
-      const gameValues = games.map((game) => [listId, game.id, game.name, game.background_image]);
-  
-      db.query(
-        'INSERT INTO list_games (list_id, game_id, game_name, background_image) VALUES ?',
-        [gameValues],
-        (err) => {
+      // Verificar e inserir os jogos na tabela games, se necessário
+      const gameValues = [];
+      games.forEach(game => {
+        // Verifica se o jogo já existe na tabela `games`
+        db.query('SELECT * FROM games WHERE id = ?', [game.id], (err, rows) => {
           if (err) {
-            console.error('Erro ao inserir jogos:', err);
-            return res.status(500).send('Erro ao salvar os jogos da lista.');
+            console.error('Erro ao verificar se o jogo existe:', err);
+            return res.status(500).send('Erro ao verificar jogos.');
           }
   
-          res.status(200).json({ message: 'Lista salva com sucesso!' });
-        }
-      );
+          // Se o jogo não existir, insere-o na tabela `games`
+          if (rows.length === 0) {
+            db.query(
+              'INSERT INTO games (id, name, background_image) VALUES (?, ?, ?)',
+              [game.id, game.name, game.background_image],
+              (err) => {
+                if (err) {
+                  console.error('Erro ao inserir jogo:', err);
+                  return res.status(500).send('Erro ao salvar o jogo.');
+                }
+              }
+            );
+          }
+  
+          // Prepara os jogos para serem associados à lista
+          gameValues.push([listId, game.id, game.name, game.background_image]);
+  
+          // Quando todos os jogos forem processados, insere-os na tabela `list_games`
+          if (gameValues.length === games.length) {
+            db.query(
+              'INSERT INTO list_games (list_id, game_id, game_name, background_image) VALUES ?',
+              [gameValues],
+              (err) => {
+                if (err) {
+                  console.error('Erro ao inserir jogos:', err);
+                  return res.status(500).send('Erro ao salvar os jogos da lista.');
+                }
+  
+                res.status(200).json({ message: 'Lista salva com sucesso!' });
+              }
+            );
+          }
+        });
+      });
     });
   });
+  
+
 
 
 
