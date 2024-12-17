@@ -13,8 +13,10 @@ export class ListDetailsComponent implements OnInit {
   listName: string = '';
   listDescription: string = '';
   addedGames: any[] = [];
-  isEditing: boolean = false;  // Controle de edição
-  
+  searchQuery: string = ''; // Para armazenar a pesquisa do usuário
+  searchResults: any[] = []; // Para armazenar os jogos encontrados
+  isEditing: boolean = false; // Controle de edição
+
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -54,21 +56,25 @@ export class ListDetailsComponent implements OnInit {
     );
   }
 
-  // Salva as alterações feitas na lista
+  // Função para salvar as alterações feitas no nome ou descrição da lista
   saveChanges(): void {
     const updatedList = {
-      name: this.listName,
-      description: this.listDescription,
-      games: this.addedGames,
+      name: this.listName, // Nome da lista atualizado
+      description: this.listDescription, // Descrição da lista atualizada
+      games: this.addedGames, // Lista de jogos (não alterada diretamente)
     };
 
+    console.log('Dados a serem enviados para o backend:', updatedList); // Log para verificar os dados
+
+    // Chama o serviço para atualizar a lista no backend
     this.listService.updateList(this.listId!, updatedList).subscribe(
       (response) => {
-        alert('Lista atualizada com sucesso!');
-        this.isEditing = false;  // Desativa o modo de edição após salvar
+        console.log('Resposta do backend:', response); // Log para verificar a resposta
+        alert('Lista atualizada com sucesso!'); // Exibe uma mensagem de sucesso
+        this.isEditing = false; // Desativa o modo de edição após salvar
       },
       (error) => {
-        console.error('Erro ao salvar as alterações:', error);
+        console.error('Erro ao salvar as alterações:', error); // Exibe uma mensagem de erro
       }
     );
   }
@@ -76,21 +82,60 @@ export class ListDetailsComponent implements OnInit {
   // Cancela a edição e restaura os valores originais
   cancelEdit(): void {
     this.isEditing = false;
-    this.loadListDetails(this.listId!);  // Restaura os dados originais
+    this.loadListDetails(this.listId!); // Restaura os dados originais
   }
 
-  // Função para adicionar um jogo à lista de jogos
+  // Pesquisa jogos com base na entrada do usuário
+  onSearchInput(): void {
+    if (this.searchQuery.trim().length > 0) {
+      this.listService.searchGames(this.searchQuery).subscribe(
+        (results) => {
+          this.searchResults = results; // Armazena os resultados da pesquisa
+        },
+        (error) => {
+          console.error('Erro ao buscar jogos:', error);
+        }
+      );
+    } else {
+      this.searchResults = []; // Limpa os resultados se a pesquisa estiver vazia
+    }
+  }
+
+  // Adiciona um jogo à lista de jogos
   addGameToList(game: any): void {
     this.addedGames.push(game); // Adiciona o jogo à lista
+    this.listService.addGameToList(this.listId!, game).subscribe(
+      (response) => {
+        console.log('Jogo adicionado com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao adicionar jogo:', error);
+      }
+    );
   }
 
-  // Função para remover um jogo da lista de jogos
+  // Remove um jogo da lista de jogos
   removeGameFromList(game: any): void {
-    this.addedGames = this.addedGames.filter(addedGame => addedGame.id !== game.id); // Filtra o jogo que será removido
+    this.addedGames = this.addedGames.filter(
+      (addedGame) => addedGame.id !== game.id
+    ); // Filtra o jogo que será removido
+    this.listService.removeGameFromList(this.listId!, game.id).subscribe(
+      (response) => {
+        console.log('Jogo removido com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao remover jogo:', error);
+      }
+    );
   }
 
+  // Adicionar um jogo diretamente à lista (exemplo)
   addGame(): void {
-    const selectedGame = { id: 1, game_name: 'Novo Jogo', background_image: 'url-da-imagem' };
+    const selectedGame = {
+      id: 1,
+      game_name: 'Novo Jogo',
+      background_image: 'url-da-imagem',
+    };
     this.addedGames.push(selectedGame);
 
     this.listService.addGameToList(this.listId!, selectedGame).subscribe(
@@ -102,6 +147,4 @@ export class ListDetailsComponent implements OnInit {
       }
     );
   }
-  
-  
 }

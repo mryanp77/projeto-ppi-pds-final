@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ListService {
-  private apiUrl = 'http://localhost:3000/api/lists';
+  private apiUrl = 'http://localhost:3000/api/lists'; // URL base da API
 
   constructor(private http: HttpClient) {}
 
@@ -28,10 +28,10 @@ export class ListService {
     return this.http.get(`${this.apiUrl}/${listId}`);
   }
 
-  // Método para atualizar a lista (nome, descrição)
-  updateList(listId: string, updatedList: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update-list/${listId}`, updatedList);
-  }
+  // Método para atualizar a lista
+updateList(listId: string, updatedList: any): Observable<any> {
+  return this.http.put(`${this.apiUrl}/update-list/${listId}`, updatedList);
+}
 
   // Método para adicionar um jogo à lista
   addGameToList(listId: string, game: any): Observable<any> {
@@ -44,4 +44,13 @@ export class ListService {
     });
   }
 
+  // Método para remover um jogo da lista
+  removeGameFromList(listId: string, gameId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/remove-game/${listId}/${gameId}`);
+  }
+
+  // Pesquisa jogos com base na query fornecida
+  searchGames(query: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/search-games?query=${query}`);
+  }
 }
