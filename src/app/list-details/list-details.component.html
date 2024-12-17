@@ -1,72 +1,71 @@
-<div class="container mt-5">
-    <div class="row">
-      <!-- Card de Detalhes da Lista -->
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">
-              <!-- Nome da lista -->
-              <span *ngIf="!isEditing">{{ listName }}</span>
-              <input *ngIf="isEditing" [(ngModel)]="listName" class="form-control" />
-            </h4>
+<div class="list-details-container">
+    <div class="card">
+      <div class="card-body">
+        <!-- Nome e Descrição da Lista -->
+        <h4 class="card-title">
+          <span *ngIf="!isEditing">{{ listName }}</span>
+          <input *ngIf="isEditing" [(ngModel)]="listName" class="form-control" placeholder="Nome da lista" />
+        </h4>
   
-            <p class="card-text">
-              <!-- Descrição da lista -->
-              <span *ngIf="!isEditing">{{ listDescription }}</span>
-              <textarea *ngIf="isEditing" [(ngModel)]="listDescription" class="form-control"></textarea>
-            </p>
+        <p class="card-text">
+          <span *ngIf="!isEditing">{{ listDescription }}</span>
+          <textarea
+            *ngIf="isEditing"
+            [(ngModel)]="listDescription"
+            class="form-control"
+            placeholder="Descrição da lista"
+          ></textarea>
+        </p>
   
-            <h5>Jogos Adicionados</h5>
-            <div *ngIf="addedGames.length > 0; else noGames">
-              <ul class="list-group">
-                <li *ngFor="let game of addedGames" class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6>{{ game.game_name }}</h6>
-                    <img [src]="game.background_image" alt="{{ game.game_name }}" class="img-thumbnail" style="max-width: 100px;" />
-                  </div>
-                  <button class="btn btn-danger" (click)="removeGameFromList(game)">
-                    Remover
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <ng-template #noGames>
-              <p class="text-muted">Nenhum jogo adicionado ainda.</p>
-            </ng-template>
-  
-            <!-- Barra de pesquisa para adicionar jogos -->
-            <div class="search-bar mt-3">
-              <label for="game-search">Pesquisar Jogos:</label>
-              <input
-                type="text"
-                id="game-search"
-                class="form-control"
-                placeholder="Pesquise por jogos..."
-                [(ngModel)]="searchQuery"
-                (input)="onSearchInput()"
-              />
-              <div class="search-results" *ngIf="searchResults.length > 0">
-                <ul>
-                  <li *ngFor="let game of searchResults" class="search-result-item d-flex align-items-center">
-                    <img [src]="game.background_image" alt="{{ game.name }}" class="result-image me-2" />
-                    <span class="game-name">{{ game.name }}</span>
-                    <button class="btn btn-success btn-add-game" (click)="addGameToList(game)">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </li>
-                </ul>
+        <!-- Lista de Jogos Adicionados -->
+        <h5>Jogos Adicionados</h5>
+        <div *ngIf="addedGames.length > 0; else noGames">
+          <ul class="list-group">
+            <li *ngFor="let game of addedGames" class="list-group-item">
+              <div class="added-game-info">
+                <img [src]="game.background_image" alt="{{ game.game_name }}" class="img-thumbnail" />
+                <span class="game-name">{{ game.game_name }}</span>
               </div>
-            </div>
+              <button class="btn btn-danger btn-remove-game" (click)="removeGameFromList(game)">
+                Remover
+              </button>
+            </li>
+          </ul>
+        </div>
+        <ng-template #noGames>
+          <p class="text-muted">Nenhum jogo adicionado ainda.</p>
+        </ng-template>
   
-            <!-- Botões de ação -->
-            <div *ngIf="!isEditing">
-              <button class="btn btn-warning" (click)="editList()">Editar Lista</button>
-            </div>
-            <div *ngIf="isEditing">
-              <button class="btn btn-success" (click)="saveChanges()">Salvar Alterações</button>
-              <button class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
-            </div>
-            <button class="btn btn-success" (click)="addGame()">Adicionar Jogo</button>
+        <!-- Barra de Pesquisa -->
+        <div class="search-bar">
+          <label for="game-search">Pesquisar Jogos:</label>
+          <input
+            type="text"
+            id="game-search"
+            class="form-control"
+            placeholder="Pesquise por jogos..."
+            [(ngModel)]="searchQuery"
+            (input)="onSearchInput()"
+          />
+          <div class="search-results" *ngIf="searchResults.length > 0">
+            <ul>
+              <li *ngFor="let game of searchResults" class="search-result-item">
+                <img [src]="game.background_image" alt="{{ game.game_name }}" class="result-image" />
+                <span class="game-name">{{ game.game_name }}</span>
+                <button class="btn btn-success btn-add-game" (click)="addGameToList(game)">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+  
+        <!-- Botões de Ação -->
+        <div class="mt-3">
+          <button *ngIf="!isEditing" class="btn btn-warning" (click)="editList()">Editar Lista</button>
+          <div *ngIf="isEditing">
+            <button class="btn btn-success" (click)="saveChanges()">Salvar Alterações</button>
+            <button class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
           </div>
         </div>
       </div>

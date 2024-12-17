@@ -379,106 +379,112 @@ app.get("/api/lists", (req, res) => {
   });
 });
 
-
 // Exemplo de código no seu backend, por exemplo, em server.js
-app.get('/api/list-details/:listId', (req, res) => {
-    const listId = req.params.listId;
-  
-    // Primeira consulta: obter os detalhes da lista
-    const query = 'SELECT name, description FROM lists WHERE id = ?';
-    connection.query(query, [listId], (err, result) => {
+app.get("/api/list-details/:listId", (req, res) => {
+  const listId = req.params.listId;
+
+  // Primeira consulta: obter os detalhes da lista
+  const query = "SELECT name, description FROM lists WHERE id = ?";
+  connection.query(query, [listId], (err, result) => {
+    if (err) {
+      console.error("Erro ao buscar lista:", err);
+      return res.status(500).send("Erro ao buscar lista");
+    }
+
+    // Se a lista for encontrada, buscar os jogos associados
+    const list = result[0];
+
+    const queryGames =
+      "SELECT game_id, game_name, background_image FROM list_games WHERE list_id = ?";
+    connection.query(queryGames, [listId], (err, games) => {
       if (err) {
-        console.error('Erro ao buscar lista:', err);
-        return res.status(500).send('Erro ao buscar lista');
+        console.error("Erro ao buscar jogos:", err);
+        return res.status(500).send("Erro ao buscar jogos");
       }
-  
-      // Se a lista for encontrada, buscar os jogos associados
-      const list = result[0];
-  
-      const queryGames = 'SELECT game_id, game_name, background_image FROM list_games WHERE list_id = ?';
-      connection.query(queryGames, [listId], (err, games) => {
-        if (err) {
-          console.error('Erro ao buscar jogos:', err);
-          return res.status(500).send('Erro ao buscar jogos');
-        }
-  
-        // Retornar os detalhes da lista junto com os jogos
-        res.json({
-          name: list.name,
-          description: list.description,
-          games: games,
-        });
+
+      // Retornar os detalhes da lista junto com os jogos
+      res.json({
+        name: list.name,
+        description: list.description,
+        games: games,
       });
     });
   });
-  
+});
 
-  app.put('/api/lists/update-list/:id', (req, res) => {
-    const listId = req.params.id;
-    const { name, description, games } = req.body;
-  
-    // Query para atualizar a lista
-    const query = 'UPDATE lists SET name = ?, description = ? WHERE id = ?';
-  
-    db.query(query, [name, description, listId], (err, result) => {
-      if (err) {
-        console.error('Erro ao atualizar a lista:', err);
-        return res.status(500).json({ error: 'Erro ao atualizar a lista' });
-      }
-  
-      // Confirma se houve uma atualização
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Lista não encontrada' });
-      }
-  
-      res.json({ message: 'Lista atualizada com sucesso!' });
+app.put("/api/lists/update-list/:id", (req, res) => {
+  const listId = req.params.id;
+  const { name, description, games } = req.body;
+
+  // Query para atualizar a lista
+  const query = "UPDATE lists SET name = ?, description = ? WHERE id = ?";
+
+  db.query(query, [name, description, listId], (err, result) => {
+    if (err) {
+      console.error("Erro ao atualizar a lista:", err);
+      return res.status(500).json({ error: "Erro ao atualizar a lista" });
+    }
+
+    // Confirma se houve uma atualização
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Lista não encontrada" });
+    }
+
+    res.json({ message: "Lista atualizada com sucesso!" });
+  });
+});
+
+// Rota para adicionar um jogo à lista
+app.post("/api/lists/add-game-to-list", (req, res) => {
+  const { listId, gameId, gameName, backgroundImage } = req.body;
+  // Aqui você pode salvar a associação entre o jogo e a lista no banco de dados
+  const list = db.get("lists").find({ id: listId });
+  if (list) {
+    // Adiciona o jogo à lista
+    list.games.push({
+      id: gameId,
+      name: gameName,
+      background_image: backgroundImage,
     });
-  });
-  
-  
+    db.write();
+    res.status(200).json({ message: "Jogo adicionado à lista!" });
+  } else {
+    res.status(404).json({ message: "Lista não encontrada!" });
+  }
+});
 
+// Rota para remover um jogo da lista
+app.delete("/api/lists/remove-game/:listId/:gameId", (req, res) => {
+  const { listId, gameId } = req.params;
+  const list = db.get("lists").find({ id: listId });
+  if (list) {
+    list.games = list.games.filter((game) => game.id !== gameId); // Remove o jogo
+    db.write();
+    res.status(200).json({ message: "Jogo removido da lista!" });
+  } else {
+    res.status(404).json({ message: "Lista não encontrada!" });
+  }
+});
 
-
-
- // Rota para adicionar um jogo à lista
-app.post('/api/lists/add-game-to-list', (req, res) => {
-    const { listId, gameId, gameName, backgroundImage } = req.body;
-    // Aqui você pode salvar a associação entre o jogo e a lista no banco de dados
-    const list = db.get('lists').find({ id: listId });
-    if (list) {
-      // Adiciona o jogo à lista
-      list.games.push({ id: gameId, name: gameName, background_image: backgroundImage });
-      db.write();
-      res.status(200).json({ message: 'Jogo adicionado à lista!' });
-    } else {
-      res.status(404).json({ message: 'Lista não encontrada!' });
-    }
-  });
-
-
-  // Rota para remover um jogo da lista
-app.delete('/api/lists/remove-game/:listId/:gameId', (req, res) => {
-    const { listId, gameId } = req.params;
-    const list = db.get('lists').find({ id: listId });
-    if (list) {
-      list.games = list.games.filter(game => game.id !== gameId); // Remove o jogo
-      db.write();
-      res.status(200).json({ message: 'Jogo removido da lista!' });
-    } else {
-      res.status(404).json({ message: 'Lista não encontrada!' });
-    }
-  });
-
-  // Rota para pesquisar jogos
 app.get('/api/lists/search-games', (req, res) => {
-    const query = req.query.query.toLowerCase();
-    const games = db.get('games').filter(game => game.name.toLowerCase().includes(query)); // Pesquisa no banco
-    res.json(games);
-  });
+    const query = req.query.query; // Parâmetro de busca do frontend
 
+    if (!query) {
+        return res.status(400).send('Parâmetro de busca não fornecido');
+    }
 
+    // Consulta SQL para buscar os jogos baseados no nome
+    const sql = 'SELECT * FROM list_games WHERE game_name LIKE ?';
+    const searchParam = `%${query}%`; // Monta o parâmetro com % para busca parcial
 
-
+    db.query(sql, [searchParam], (err, results) => {
+        if (err) {
+            console.error('Erro ao executar consulta SQL:', err);
+            return res.status(500).send('Erro ao buscar jogos no banco de dados');
+        }
+        res.json(results); // Retorna os resultados encontrados
+    });
+});
 
 
 
