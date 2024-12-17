@@ -50,8 +50,8 @@
           <div class="search-results" *ngIf="searchResults.length > 0">
             <ul>
               <li *ngFor="let game of searchResults" class="search-result-item">
-                <img [src]="game.background_image" alt="{{ game.game_name }}" class="result-image" />
-                <span class="game-name">{{ game.game_name }}</span>
+                <img [src]="game.background_image" alt="{{ game.name }}" class="result-image" />
+                <span class="game-name">{{ game.name }}</span>
                 <button class="btn btn-success btn-add-game" (click)="addGameToList(game)">
                   <i class="fas fa-plus"></i>
                 </button>

@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./db");
 const connection = require("./db");
+const axios = require('axios');
 
 const app = express();
 app.use(cors());
@@ -490,25 +491,30 @@ app.delete("/api/lists/remove-game/:listId/:gameId", (req, res) => {
   });
   
 
-app.get("/api/lists/search-games", (req, res) => {
-  const query = req.query.query; // Parâmetro de busca do frontend
-
-  if (!query) {
-    return res.status(400).send("Parâmetro de busca não fornecido");
-  }
-
-  // Consulta SQL para buscar os jogos baseados no nome
-  const sql = "SELECT * FROM list_games WHERE game_name LIKE ?";
-  const searchParam = `%${query}%`; // Monta o parâmetro com % para busca parcial
-
-  db.query(sql, [searchParam], (err, results) => {
-    if (err) {
-      console.error("Erro ao executar consulta SQL:", err);
-      return res.status(500).send("Erro ao buscar jogos no banco de dados");
+// Rota para buscar jogos na API RAWG
+app.get("/api/lists/search-games", async (req, res) => {
+    const query = req.query.query; // Parâmetro de busca do frontend
+  
+    if (!query) {
+      return res.status(400).send("Parâmetro de busca não fornecido");
     }
-    res.json(results); // Retorna os resultados encontrados
+  
+    try {
+      // Chama a API do RAWG para buscar os jogos
+      const response = await axios.get('https://api.rawg.io/api/games', {
+        params: {
+          search: query,
+          key: 'b07a5bb97c484fcba2b68d5d6e04b9ea', // Sua chave de API RAWG
+        },
+      });
+  
+      // Retorna os resultados encontrados
+      res.json(response.data.results);
+    } catch (err) {
+      console.error("Erro ao buscar jogos na API RAWG:", err);
+      return res.status(500).send("Erro ao buscar jogos na API RAWG");
+    }
   });
-});
 
 // Inicialização do servidor
 const PORT = 3000;

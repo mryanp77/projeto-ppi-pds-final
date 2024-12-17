@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ListService } from '../services/list.service';
+import { GameService } from '../services/game.service';
 
 @Component({
   selector: 'app-list-details',
@@ -21,7 +22,8 @@ export class ListDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private listService: ListService,
-    private router: Router
+    private router: Router,
+    private gameService: GameService
   ) {}
 
   ngOnInit(): void {
@@ -86,33 +88,39 @@ export class ListDetailsComponent implements OnInit {
   }
 
   // Pesquisa jogos com base na entrada do usuário
-  onSearchInput(): void {
-    if (this.searchQuery.trim().length > 0) {
-      this.listService.searchGames(this.searchQuery).subscribe(
-        (results) => {
-          this.searchResults = results; // Armazena os resultados da pesquisa
+  onSearchInput() {
+    if (this.searchQuery.trim()) {
+      this.gameService.searchGames(this.searchQuery).subscribe(
+        (response) => {
+          console.log(response);  // Adicionando o log para ver a estrutura da resposta
+          this.searchResults = response.results.slice(0, 10); // Limita a 10 resultados
         },
-        (error) => {
-          console.error('Erro ao buscar jogos:', error);
-        }
+        (error) => console.error('Erro ao buscar jogos:', error)
       );
     } else {
-      this.searchResults = []; // Limpa os resultados se a pesquisa estiver vazia
+      this.searchResults = [];
     }
   }
 
-  // Adiciona um jogo à lista de jogos
-  addGameToList(game: any): void {
-    this.addedGames.push(game); // Adiciona o jogo à lista
-    this.listService.addGameToList(this.listId!, game).subscribe(
-      (response) => {
-        console.log('Jogo adicionado com sucesso!');
-      },
-      (error) => {
-        console.error('Erro ao adicionar jogo:', error);
-      }
-    );
+  addGameToList(game: any) {
+    const gameData = {
+      listId: this.listId, // Certifique-se de que o listId está definido
+      gameId: game.id,
+      gameName: game.name,
+      backgroundImage: game.background_image,
+    };
+  
+    this.http.post('http://localhost:3000/api/lists/add-game-to-list', gameData)
+      .subscribe(
+        response => {
+          console.log('Jogo adicionado à lista!', response);
+        },
+        error => {
+          console.error('Erro ao adicionar o jogo:', error);
+        }
+      );
   }
+  
 
   removeGameFromList(game: any): void {
     // Certifique-se de que o gameId está sendo passado corretamente
