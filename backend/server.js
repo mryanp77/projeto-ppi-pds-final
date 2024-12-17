@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./db");
+const connection = require("./db");
 
 const app = express();
 app.use(cors());
@@ -94,11 +95,9 @@ app.put("/api/user/:email", (req, res) => {
 
   // Validar se pelo menos um campo foi enviado
   if (!username && !newEmail && !password) {
-    return res
-      .status(400)
-      .json({
-        error: "Pelo menos um campo deve ser fornecido para atualização.",
-      });
+    return res.status(400).json({
+      error: "Pelo menos um campo deve ser fornecido para atualização.",
+    });
   }
 
   // Verifica se o novo email é igual ao atual
@@ -261,76 +260,122 @@ app.put("/api/change-password", (req, res) => {
 });
 
 app.post("/api/lists", (req, res) => {
-    const { name, description, games, user_email } = req.body;
-  
-    if (!user_email) {
-      return res.status(400).json({ error: "Usuário não autenticado." });
+  const { name, description, games, user_email } = req.body;
+
+  if (!user_email) {
+    return res.status(400).json({ error: "Usuário não autenticado." });
+  }
+
+  // Recuperar o user_id com base no email
+  const getUserIdQuery = "SELECT id FROM users WHERE email = ?";
+  db.query(getUserIdQuery, [user_email], (err, result) => {
+    if (err || result.length === 0) {
+      return res.status(400).json({ error: "Usuário não encontrado." });
     }
-  
-    // Recuperar o user_id com base no email
-    const getUserIdQuery = "SELECT id FROM users WHERE email = ?";
-    db.query(getUserIdQuery, [user_email], (err, result) => {
-      if (err || result.length === 0) {
-        return res.status(400).json({ error: "Usuário não encontrado." });
+
+    const userId = result[0].id; // Recupera o ID do usuário a partir do email
+
+    // Inserir a lista no banco de dados
+    const insertListQuery =
+      "INSERT INTO lists (name, description, user_id) VALUES (?, ?, ?)";
+    db.query(insertListQuery, [name, description, userId], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: "Erro ao salvar lista." });
       }
-  
-      const userId = result[0].id; // Recupera o ID do usuário a partir do email
-  
-      // Inserir a lista no banco de dados
-      const insertListQuery = "INSERT INTO lists (name, description, user_id) VALUES (?, ?, ?)";
-      db.query(insertListQuery, [name, description, userId], (err, result) => {
+
+      const listId = result.insertId;
+      const gameValues = games.map((game) => [
+        listId,
+        game.id,
+        game.name,
+        game.background_image,
+      ]);
+
+      const insertGamesQuery =
+        "INSERT INTO list_games (list_id, game_id, game_name, background_image) VALUES ?";
+      db.query(insertGamesQuery, [gameValues], (err) => {
         if (err) {
-          return res.status(500).json({ error: "Erro ao salvar lista." });
+          return res
+            .status(500)
+            .json({ error: "Erro ao salvar jogos da lista." });
         }
-  
-        const listId = result.insertId;
-        const gameValues = games.map(game => [listId, game.id, game.name, game.background_image]);
-  
-        const insertGamesQuery = "INSERT INTO list_games (list_id, game_id, game_name, background_image) VALUES ?";
-        db.query(insertGamesQuery, [gameValues], (err) => {
-          if (err) {
-            return res.status(500).json({ error: "Erro ao salvar jogos da lista." });
-          }
-  
-          res.status(200).json({ message: "Lista criada com sucesso!" });
-        });
+
+        res.status(200).json({ message: "Lista criada com sucesso!" });
       });
     });
   });
-  
-  
-
-app.get("/api/lists/user/:userId", (req, res) => {
-  const userId = req.params.userId;
-
-  // Verifique se userId está sendo passado corretamente
-  if (!userId) {
-    return res.status(400).send({ message: "userId é necessário" });
-  }
-
-  // Faça a consulta para obter as listas do usuário
-  db.query(
-    "SELECT * FROM lists WHERE user_id = ?",
-    [userId],
-    (err, results) => {
-      if (err) {
-        console.error("Erro ao buscar listas:", err);
-        return res.status(500).send({ message: "Erro ao buscar listas" });
-      }
-      return res.status(200).json(results);
-    }
-  );
 });
 
-// Rota para listar todas as listas
 app.get("/api/lists", (req, res) => {
-  db.query("SELECT * FROM lists", (err, results) => {
-    if (err) {
-      console.error("Erro ao buscar listas:", err);
-      return res.status(500).send("Erro ao buscar listas.");
+  const userEmail = req.query.user_email; // Obtendo o email do usuário da query
+
+  if (!userEmail) {
+    return res.status(400).send("Email do usuário não fornecido");
+  }
+
+  // Aqui, você precisa buscar o user_id a partir do email
+  const queryUserId = "SELECT id FROM users WHERE email = ?";
+
+  connection.query(queryUserId, [userEmail], (error, results) => {
+    if (error) {
+      console.error("Erro ao buscar o user_id:", error);
+      return res.status(500).send("Erro ao buscar o user_id");
     }
 
-    res.status(200).json(results);
+    if (results.length === 0) {
+      return res.status(404).send("Usuário não encontrado");
+    }
+
+    const userId = results[0].id; // Pegando o user_id do resultado
+
+    // Agora você pode usar o user_id para buscar as listas
+    const queryLists = "SELECT * FROM lists WHERE user_id = ?";
+
+    connection.query(queryLists, [userId], (error, lists) => {
+      if (error) {
+        console.error("Erro ao buscar listas:", error);
+        return res.status(500).send("Erro ao buscar listas");
+      }
+
+      res.json(lists); // Retorna as listas do usuário
+    });
+  });
+});
+
+// Requisição para buscar listas com base no user_id
+app.get("/api/lists", (req, res) => {
+  const userEmail = req.query.user_email; // Obtendo o email do usuário da query
+
+  if (!userEmail) {
+    return res.status(400).send("Email do usuário não fornecido");
+  }
+
+  // Aqui, você precisa buscar o user_id a partir do email
+  const queryUserId = "SELECT id FROM users WHERE email = ?";
+
+  connection.query(queryUserId, [userEmail], (error, results) => {
+    if (error) {
+      console.error("Erro ao buscar o user_id:", error);
+      return res.status(500).send("Erro ao buscar o user_id");
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send("Usuário não encontrado");
+    }
+
+    const userId = results[0].id; // Pegando o user_id do resultado
+
+    // Agora você pode usar o user_id para buscar as listas
+    const queryLists = "SELECT * FROM lists WHERE user_id = ?";
+
+    connection.query(queryLists, [userId], (error, lists) => {
+      if (error) {
+        console.error("Erro ao buscar listas:", error);
+        return res.status(500).send("Erro ao buscar listas");
+      }
+
+      res.json(lists); // Retorna as listas do usuário
+    });
   });
 });
 

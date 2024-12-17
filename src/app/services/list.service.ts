@@ -17,4 +17,9 @@ export class ListService {
   getLists() {
     return this.http.get(this.apiUrl);
   }
+
+  // Método para buscar as listas de um usuário
+  getListsByUserEmail(userEmail: string): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:3000/api/lists?user_email=${userEmail}`);
+  }
 }
