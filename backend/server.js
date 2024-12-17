@@ -437,56 +437,79 @@ app.put("/api/lists/update-list/:id", (req, res) => {
 // Rota para adicionar um jogo à lista
 app.post("/api/lists/add-game-to-list", (req, res) => {
   const { listId, gameId, gameName, backgroundImage } = req.body;
-  // Aqui você pode salvar a associação entre o jogo e a lista no banco de dados
-  const list = db.get("lists").find({ id: listId });
-  if (list) {
-    // Adiciona o jogo à lista
-    list.games.push({
-      id: gameId,
-      name: gameName,
-      background_image: backgroundImage,
-    });
-    db.write();
-    res.status(200).json({ message: "Jogo adicionado à lista!" });
-  } else {
-    res.status(404).json({ message: "Lista não encontrada!" });
+
+  // Verifica se todos os parâmetros estão presentes
+  if (!listId || !gameId || !gameName || !backgroundImage) {
+    return res.status(400).json({ message: "Todos os dados são necessários!" });
   }
+
+  // Insere a associação entre a lista e o jogo na tabela list_games
+  const query = `INSERT INTO list_games (list_id, game_id, game_name, background_image) 
+                   VALUES (?, ?, ?, ?)`;
+
+  db.query(
+    query,
+    [listId, gameId, gameName, backgroundImage],
+    (err, result) => {
+      if (err) {
+        console.error("Erro ao adicionar jogo à lista:", err);
+        return res
+          .status(500)
+          .json({ message: "Erro ao adicionar jogo à lista!" });
+      }
+
+      res.status(200).json({ message: "Jogo adicionado à lista!" });
+    }
+  );
 });
 
 // Rota para remover um jogo da lista
 app.delete("/api/lists/remove-game/:listId/:gameId", (req, res) => {
   const { listId, gameId } = req.params;
-  const list = db.get("lists").find({ id: listId });
-  if (list) {
-    list.games = list.games.filter((game) => game.id !== gameId); // Remove o jogo
-    db.write();
-    res.status(200).json({ message: "Jogo removido da lista!" });
-  } else {
-    res.status(404).json({ message: "Lista não encontrada!" });
+
+  // Verifica se o listId e gameId estão presentes
+  if (!listId || !gameId) {
+    return res.status(400).json({ message: "Parâmetros inválidos!" });
   }
-});
 
-app.get('/api/lists/search-games', (req, res) => {
-    const query = req.query.query; // Parâmetro de busca do frontend
+  // Deleta a associação entre a lista e o jogo na tabela list_games
+  const query = `DELETE FROM list_games WHERE list_id = ? AND game_id = ?`;
 
-    if (!query) {
-        return res.status(400).send('Parâmetro de busca não fornecido');
+  db.query(query, [listId, gameId], (err, result) => {
+    if (err) {
+      console.error("Erro ao remover jogo da lista:", err);
+      return res
+        .status(500)
+        .json({ message: "Erro ao remover jogo da lista!" });
     }
 
-    // Consulta SQL para buscar os jogos baseados no nome
-    const sql = 'SELECT * FROM list_games WHERE game_name LIKE ?';
-    const searchParam = `%${query}%`; // Monta o parâmetro com % para busca parcial
-
-    db.query(sql, [searchParam], (err, results) => {
-        if (err) {
-            console.error('Erro ao executar consulta SQL:', err);
-            return res.status(500).send('Erro ao buscar jogos no banco de dados');
-        }
-        res.json(results); // Retorna os resultados encontrados
-    });
+    if (result.affectedRows > 0) {
+      return res.status(200).json({ message: "Jogo removido da lista!" });
+    } else {
+      return res.status(404).json({ message: "Jogo não encontrado na lista!" });
+    }
+  });
 });
 
+app.get("/api/lists/search-games", (req, res) => {
+  const query = req.query.query; // Parâmetro de busca do frontend
 
+  if (!query) {
+    return res.status(400).send("Parâmetro de busca não fornecido");
+  }
+
+  // Consulta SQL para buscar os jogos baseados no nome
+  const sql = "SELECT * FROM list_games WHERE game_name LIKE ?";
+  const searchParam = `%${query}%`; // Monta o parâmetro com % para busca parcial
+
+  db.query(sql, [searchParam], (err, results) => {
+    if (err) {
+      console.error("Erro ao executar consulta SQL:", err);
+      return res.status(500).send("Erro ao buscar jogos no banco de dados");
+    }
+    res.json(results); // Retorna os resultados encontrados
+  });
+});
 
 // Inicialização do servidor
 const PORT = 3000;
