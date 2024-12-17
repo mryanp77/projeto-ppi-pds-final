@@ -32,12 +32,22 @@ export class LoginComponent {
   
     this.http.post('http://localhost:3000/api/login', credentials).subscribe({
       next: (response: any) => {
-        alert('Login bem-sucedido!');
-        this.authService.login(this.email); // Passa o email para o serviço de autenticação
-        this.router.navigate(['/']); // Redireciona para a página inicial
+        console.log('Resposta da API:', response); // Verifique a resposta
+  
+        // Verifique se a resposta contém os dados necessários
+        if (response && response.user) {
+          const userEmail = response.user.email; // Usar email como identificador
+          this.authService.login(userEmail); // Passa o email para o serviço de autenticação
+          this.router.navigate(['/']); // Redireciona para a página inicial
+        } else {
+          alert('Erro: Dados do usuário não encontrados na resposta da API.');
+        }
       },
       error: (err) => alert('Erro ao fazer login: ' + err.message)
     });
   }
+  
+  
+  
   
 }
