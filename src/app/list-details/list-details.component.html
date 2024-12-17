@@ -1,41 +1,45 @@
 <div class="container mt-5">
     <div class="row">
       <!-- Card de Detalhes da Lista -->
-      <div class="col-md-8">
+      <div class="col-md-12">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Detalhes da Lista</h4>
+            <h4 class="card-title">
+              <!-- Exibe o nome como texto ou input (editable) -->
+              <span *ngIf="!isEditing">{{ listName }}</span>
+              <input *ngIf="isEditing" [(ngModel)]="listName" class="form-control" />
+            </h4>
   
-            <!-- Formulário de Edição -->
-            <div class="mb-3">
-              <label for="list-name">Nome da Lista</label>
-              <input
-                type="text"
-                id="list-name"
-                class="form-control"
-                [(ngModel)]="listName"
-              />
+            <p class="card-text">
+              <!-- Exibe a descrição como texto ou input (editable) -->
+              <span *ngIf="!isEditing">{{ listDescription }}</span>
+              <textarea *ngIf="isEditing" [(ngModel)]="listDescription" class="form-control"></textarea>
+            </p>
+  
+            <h5>Jogos Adicionados</h5>
+            <div *ngIf="addedGames.length > 0; else noGames">
+              <ul class="list-group">
+                <li *ngFor="let game of addedGames" class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6>{{ game.game_name }}</h6>
+                    <img [src]="game.background_image" alt="{{ game.game_name }}" class="img-thumbnail" style="max-width: 100px;" />
+                  </div>
+                </li>
+              </ul>
             </div>
-            <div class="mb-3">
-              <label for="list-description">Descrição</label>
-              <textarea
-                id="list-description"
-                class="form-control"
-                [(ngModel)]="listDescription"
-              ></textarea>
+            <ng-template #noGames>
+              <p class="text-muted">Nenhum jogo adicionado ainda.</p>
+            </ng-template>
+  
+            <!-- Botões para editar a lista ou adicionar/remover jogos -->
+            <div *ngIf="!isEditing">
+              <button class="btn btn-warning" (click)="editList()">Editar Lista</button>
             </div>
-            <button class="btn btn-primary" (click)="saveChanges()">Salvar Alterações</button>
-  
-            <!-- Exibição de Jogos Adicionados -->
-            <h5 class="mt-4">Jogos Adicionados</h5>
-            <ul class="list-group">
-              <li *ngFor="let game of addedGames" class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ game.name }}</span>
-                <button class="btn btn-danger" (click)="removeGameFromList(game)">Remover</button>
-              </li>
-            </ul>
-  
-            <!-- Aqui você pode adicionar uma funcionalidade de adicionar novos jogos -->
+            <div *ngIf="isEditing">
+              <button class="btn btn-success" (click)="saveChanges()">Salvar Alterações</button>
+              <button class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+            </div>
+            <button class="btn btn-success" (click)="addGame()">Adicionar Jogo</button>
           </div>
         </div>
       </div>

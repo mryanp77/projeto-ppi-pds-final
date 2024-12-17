@@ -379,6 +379,62 @@ app.get("/api/lists", (req, res) => {
   });
 });
 
+
+// Exemplo de código no seu backend, por exemplo, em server.js
+app.get('/api/list-details/:listId', (req, res) => {
+    const listId = req.params.listId;
+  
+    // Primeira consulta: obter os detalhes da lista
+    const query = 'SELECT name, description FROM lists WHERE id = ?';
+    connection.query(query, [listId], (err, result) => {
+      if (err) {
+        console.error('Erro ao buscar lista:', err);
+        return res.status(500).send('Erro ao buscar lista');
+      }
+  
+      // Se a lista for encontrada, buscar os jogos associados
+      const list = result[0];
+  
+      const queryGames = 'SELECT game_id, game_name, background_image FROM list_games WHERE list_id = ?';
+      connection.query(queryGames, [listId], (err, games) => {
+        if (err) {
+          console.error('Erro ao buscar jogos:', err);
+          return res.status(500).send('Erro ao buscar jogos');
+        }
+  
+        // Retornar os detalhes da lista junto com os jogos
+        res.json({
+          name: list.name,
+          description: list.description,
+          games: games,
+        });
+      });
+    });
+  });
+  
+
+
+
+
+
+  app.post('/api/add-game-to-list', (req, res) => {
+    const { listId, gameId, gameName, backgroundImage } = req.body;
+  
+    const query = 'INSERT INTO list_games (list_id, game_id, game_name, background_image) VALUES (?, ?, ?, ?)';
+    connection.query(query, [listId, gameId, gameName, backgroundImage], (err, result) => {
+      if (err) {
+        console.error('Erro ao adicionar jogo:', err);
+        return res.status(500).send('Erro ao adicionar jogo');
+      }
+  
+      res.status(200).send('Jogo adicionado com sucesso!');
+    });
+  });
+
+
+
+
+
 // Inicialização do servidor
 const PORT = 3000;
 app.listen(PORT, () => {

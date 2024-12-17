@@ -13,6 +13,7 @@ export class ListDetailsComponent implements OnInit {
   listName: string = '';
   listDescription: string = '';
   addedGames: any[] = [];
+  isEditing: boolean = false;  // Controle de edição
   
   constructor(
     private route: ActivatedRoute,
@@ -34,14 +35,18 @@ export class ListDetailsComponent implements OnInit {
     }
   }
 
+  // Habilita a edição do nome e descrição
+  editList(): void {
+    this.isEditing = true;
+  }
+
   // Função para carregar os detalhes da lista a partir do ID
   loadListDetails(listId: string): void {
-    // O "!" aqui informa ao TypeScript que listId não será null ou undefined.
-    this.listService.getListDetails(listId).subscribe(
+    this.http.get(`http://localhost:3000/api/list-details/${listId}`).subscribe(
       (data: any) => {
         this.listName = data.name;
         this.listDescription = data.description;
-        this.addedGames = data.games; // Carrega os jogos associados à lista
+        this.addedGames = data.games; // Aqui você armazena os jogos
       },
       (error) => {
         console.error('Erro ao carregar os detalhes da lista:', error);
@@ -49,23 +54,29 @@ export class ListDetailsComponent implements OnInit {
     );
   }
 
-  // Função para salvar as edições feitas no nome ou descrição da lista
+  // Salva as alterações feitas na lista
   saveChanges(): void {
     const updatedList = {
       name: this.listName,
       description: this.listDescription,
-      games: this.addedGames, // Lista de jogos adicionados
+      games: this.addedGames,
     };
 
-    // Chama o serviço para atualizar a lista
     this.listService.updateList(this.listId!, updatedList).subscribe(
       (response) => {
         alert('Lista atualizada com sucesso!');
+        this.isEditing = false;  // Desativa o modo de edição após salvar
       },
       (error) => {
         console.error('Erro ao salvar as alterações:', error);
       }
     );
+  }
+
+  // Cancela a edição e restaura os valores originais
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.loadListDetails(this.listId!);  // Restaura os dados originais
   }
 
   // Função para adicionar um jogo à lista de jogos
@@ -77,4 +88,20 @@ export class ListDetailsComponent implements OnInit {
   removeGameFromList(game: any): void {
     this.addedGames = this.addedGames.filter(addedGame => addedGame.id !== game.id); // Filtra o jogo que será removido
   }
+
+  addGame(): void {
+    const selectedGame = { id: 1, game_name: 'Novo Jogo', background_image: 'url-da-imagem' };
+    this.addedGames.push(selectedGame);
+
+    this.listService.addGameToList(this.listId!, selectedGame).subscribe(
+      (response) => {
+        console.log('Jogo adicionado com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao adicionar jogo:', error);
+      }
+    );
+  }
+  
+  
 }

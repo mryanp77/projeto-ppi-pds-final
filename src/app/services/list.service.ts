@@ -28,8 +28,20 @@ export class ListService {
     return this.http.get(`${this.apiUrl}/${listId}`);
   }
 
-  // Atualiza os detalhes de uma lista
+  // Método para atualizar a lista (nome, descrição)
   updateList(listId: string, updatedList: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${listId}`, updatedList);
+    return this.http.put(`${this.apiUrl}/update-list/${listId}`, updatedList);
   }
+
+  // Método para adicionar um jogo à lista
+  addGameToList(listId: string, game: any): Observable<any> {
+    // Faz a requisição POST ao servidor com os dados necessários
+    return this.http.post(`${this.apiUrl}/add-game-to-list`, {
+      listId: listId,
+      gameId: game.id,
+      gameName: game.game_name,
+      backgroundImage: game.background_image,
+    });
+  }
+
 }
