@@ -50,7 +50,7 @@ export class CreateListComponent {
         description: this.listDescription,
         games: this.addedGames,
       };
-
+  
       this.listService.saveList(newList).subscribe(
         () => {
           alert('Lista salva com sucesso!');
@@ -69,4 +69,5 @@ export class CreateListComponent {
       alert('Preencha todos os campos obrigatórios!');
     }
   }
+  
 }

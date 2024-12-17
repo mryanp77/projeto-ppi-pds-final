@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const db = require('./db');
+const router = express.Router();
 
 const app = express();
 app.use(cors());
@@ -252,67 +253,58 @@ app.put('/api/change-password', (req, res) => {
 
 
 
-// Rota para salvar uma lista
-app.post('/api/lists', (req, res) => {
+  app.post('/api/lists', (req, res) => {
     const { name, description, games } = req.body;
   
-    // Insere a lista no banco
-    db.query('INSERT INTO lists (name, description) VALUES (?, ?)', [name, description], (err, result) => {
+    const insertListQuery = 'INSERT INTO lists (name, description) VALUES (?, ?)';
+    db.query(insertListQuery, [name, description], (err, result) => {
       if (err) {
         console.error('Erro ao inserir lista:', err);
-        return res.status(500).send('Erro ao salvar a lista.');
+        return res.status(500).json({ error: 'Erro ao salvar a lista.' });
       }
   
-      const listId = result.insertId;
+      const listId = result.insertId; // ID da lista recém-criada
+      const gameValues = games.map((game) => [listId, game.id, game.name, game.background_image]);
   
-      // Verificar e inserir os jogos na tabela games, se necessário
-      const gameValues = [];
-      games.forEach(game => {
-        // Verifica se o jogo já existe na tabela `games`
-        db.query('SELECT * FROM games WHERE id = ?', [game.id], (err, rows) => {
-          if (err) {
-            console.error('Erro ao verificar se o jogo existe:', err);
-            return res.status(500).send('Erro ao verificar jogos.');
-          }
+      const insertListGamesQuery = `
+        INSERT INTO list_games (list_id, game_id, game_name, background_image)
+        VALUES ?
+      `;
+      db.query(insertListGamesQuery, [gameValues], (err) => {
+        if (err) {
+          console.error('Erro ao inserir jogos da lista:', err);
+          return res.status(500).json({ error: 'Erro ao salvar os jogos da lista.' });
+        }
   
-          // Se o jogo não existir, insere-o na tabela `games`
-          if (rows.length === 0) {
-            db.query(
-              'INSERT INTO games (id, name, background_image) VALUES (?, ?, ?)',
-              [game.id, game.name, game.background_image],
-              (err) => {
-                if (err) {
-                  console.error('Erro ao inserir jogo:', err);
-                  return res.status(500).send('Erro ao salvar o jogo.');
-                }
-              }
-            );
-          }
-  
-          // Prepara os jogos para serem associados à lista
-          gameValues.push([listId, game.id, game.name, game.background_image]);
-  
-          // Quando todos os jogos forem processados, insere-os na tabela `list_games`
-          if (gameValues.length === games.length) {
-            db.query(
-              'INSERT INTO list_games (list_id, game_id, game_name, background_image) VALUES ?',
-              [gameValues],
-              (err) => {
-                if (err) {
-                  console.error('Erro ao inserir jogos:', err);
-                  return res.status(500).send('Erro ao salvar os jogos da lista.');
-                }
-  
-                res.status(200).json({ message: 'Lista salva com sucesso!' });
-              }
-            );
-          }
-        });
+        res.status(200).json({ message: 'Lista e jogos salvos com sucesso!' });
       });
     });
   });
   
 
+  
+ // Exemplo de rota para buscar listas associadas a um usuário
+router.get('/api/user/lists', (req, res) => {
+    const userId = req.user?.id; // Certifique-se que o ID do usuário está disponível (via token JWT, por exemplo)
+  
+    if (!userId) {
+      return res.status(401).json({ error: 'Usuário não autenticado.' });
+    }
+  
+    // Busca listas no banco de dados
+    db.query('SELECT * FROM lists INNER JOIN list_user ON lists.id = list_user.list_id WHERE list_user.user_id = ?', [userId], 
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: 'Erro no servidor.' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'Nenhuma lista encontrada para este usuário.' });
+      }
+  
+      res.status(200).json(results);
+    });
+  });
 
 
 
@@ -340,3 +332,5 @@ const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}.`);
 });
+
+module.exports = router;

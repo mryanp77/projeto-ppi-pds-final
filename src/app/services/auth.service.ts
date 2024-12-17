@@ -91,5 +91,9 @@ export class AuthService {
       newPassword
     });
   }
-  
+
+  // Método para buscar listas do usuário
+  getUserLists(): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:3000/api/user/lists');
+  }
 }
