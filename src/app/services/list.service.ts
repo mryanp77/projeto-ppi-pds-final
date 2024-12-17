@@ -22,4 +22,14 @@ export class ListService {
   getListsByUserEmail(userEmail: string): Observable<any[]> {
     return this.http.get<any[]>(`http://localhost:3000/api/lists?user_email=${userEmail}`);
   }
+
+  // Obtém os detalhes de uma lista
+  getListDetails(listId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${listId}`);
+  }
+
+  // Atualiza os detalhes de uma lista
+  updateList(listId: string, updatedList: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${listId}`, updatedList);
+  }
 }
