@@ -465,31 +465,30 @@ app.post("/api/lists/add-game-to-list", (req, res) => {
 
 // Rota para remover um jogo da lista
 app.delete("/api/lists/remove-game/:listId/:gameId", (req, res) => {
-  const { listId, gameId } = req.params;
-
-  // Verifica se o listId e gameId estão presentes
-  if (!listId || !gameId) {
-    return res.status(400).json({ message: "Parâmetros inválidos!" });
-  }
-
-  // Deleta a associação entre a lista e o jogo na tabela list_games
-  const query = `DELETE FROM list_games WHERE list_id = ? AND game_id = ?`;
-
-  db.query(query, [listId, gameId], (err, result) => {
-    if (err) {
-      console.error("Erro ao remover jogo da lista:", err);
-      return res
-        .status(500)
-        .json({ message: "Erro ao remover jogo da lista!" });
+    const { listId, gameId } = req.params;
+  
+    // Verifica se os parâmetros estão presentes
+    if (!listId || !gameId) {
+      return res.status(400).json({ message: "Parâmetros inválidos!" });
     }
-
-    if (result.affectedRows > 0) {
-      return res.status(200).json({ message: "Jogo removido da lista!" });
-    } else {
-      return res.status(404).json({ message: "Jogo não encontrado na lista!" });
-    }
+  
+    // Deleta a associação entre a lista e o jogo na tabela list_games
+    const query = `DELETE FROM list_games WHERE list_id = ? AND game_id = ?`;
+  
+    db.query(query, [listId, gameId], (err, result) => {
+      if (err) {
+        console.error("Erro ao remover jogo da lista:", err);
+        return res.status(500).json({ message: "Erro ao remover jogo da lista!" });
+      }
+  
+      if (result.affectedRows > 0) {
+        return res.status(200).json({ message: "Jogo removido da lista!" });
+      } else {
+        return res.status(404).json({ message: "Jogo não encontrado na lista!" });
+      }
+    });
   });
-});
+  
 
 app.get("/api/lists/search-games", (req, res) => {
   const query = req.query.query; // Parâmetro de busca do frontend

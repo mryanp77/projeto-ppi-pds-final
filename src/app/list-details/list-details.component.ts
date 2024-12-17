@@ -114,19 +114,22 @@ export class ListDetailsComponent implements OnInit {
     );
   }
 
-  // Remove um jogo da lista de jogos
   removeGameFromList(game: any): void {
-    this.addedGames = this.addedGames.filter(
-      (addedGame) => addedGame.id !== game.id
-    ); // Filtra o jogo que será removido
-    this.listService.removeGameFromList(this.listId!, game.id).subscribe(
-      (response) => {
-        console.log('Jogo removido com sucesso!');
-      },
-      (error) => {
-        console.error('Erro ao remover jogo:', error);
-      }
-    );
+    // Certifique-se de que o gameId está sendo passado corretamente
+    const gameId = game.game_id;  // Ou game.id, dependendo do seu objeto
+    const listId = this.listId;  // Certifique-se de que a listId está correta
+    
+    this.http.delete(`http://localhost:3000/api/lists/remove-game/${listId}/${gameId}`)
+      .subscribe(
+        (response) => {
+          console.log('Jogo removido da lista!');
+          // Atualize a lista de jogos removendo o jogo removido
+          this.addedGames = this.addedGames.filter((g) => g.game_id !== gameId); // Filtra o jogo removido
+        },
+        (error) => {
+          console.error('Erro ao remover jogo:', error);
+        }
+      );
   }
 
   // Adicionar um jogo diretamente à lista (exemplo)
