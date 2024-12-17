@@ -3,12 +3,27 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./db");
 const connection = require("./db");
-const axios = require('axios');
+const axios = require("axios");
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './uploads/'); // Pasta onde as imagens serão salvas
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Nome do arquivo com timestamp
+    }
+  });
+  
+  const upload = multer({ storage: storage });
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
+ // Servir arquivos estáticos (imagens de perfil)
+ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ================= Rota para registrar usuário ===================
 app.post("/api/register", (req, res) => {
@@ -70,24 +85,28 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-// ===================== Rota para obter o nome do usuário logado ====================
 app.get("/api/user/:email", (req, res) => {
-  const { email } = req.params;
-  const query = "SELECT username, email FROM users WHERE email = ?";
-  db.query(query, [email], (err, results) => {
-    if (err) {
-      console.error("Erro ao buscar dados do usuário:", err);
-      res.status(500).json({ error: "Erro ao buscar dados do usuário." });
-    } else if (results.length > 0) {
-      res.status(200).json({
-        username: results[0].username,
-        email: results[0].email,
-      });
-    } else {
-      res.status(404).json({ error: "Usuário não encontrado." });
-    }
+    const { email } = req.params;
+    const query = "SELECT username, email, profile_image FROM users WHERE email = ?";
+    db.query(query, [email], (err, results) => {
+      if (err) {
+        console.error("Erro ao buscar dados do usuário:", err);
+        res.status(500).json({ error: "Erro ao buscar dados do usuário." });
+      } else if (results.length > 0) {
+        const profileImage = results[0].profile_image;
+        const imageUrl = profileImage ? `http://localhost:3000/uploads/${profileImage}` : null;
+  
+        res.status(200).json({
+          username: results[0].username,
+          email: results[0].email,
+          profile_image: imageUrl // Incluindo a URL completa
+        });
+      } else {
+        res.status(404).json({ error: "Usuário não encontrado." });
+      }
+    });
   });
-});
+  
 
 // ===================== Rota para atualizar o usuário ====================
 app.put("/api/user/:email", (req, res) => {
@@ -466,55 +485,69 @@ app.post("/api/lists/add-game-to-list", (req, res) => {
 
 // Rota para remover um jogo da lista
 app.delete("/api/lists/remove-game/:listId/:gameId", (req, res) => {
-    const { listId, gameId } = req.params;
-  
-    // Verifica se os parâmetros estão presentes
-    if (!listId || !gameId) {
-      return res.status(400).json({ message: "Parâmetros inválidos!" });
+  const { listId, gameId } = req.params;
+
+  // Verifica se os parâmetros estão presentes
+  if (!listId || !gameId) {
+    return res.status(400).json({ message: "Parâmetros inválidos!" });
+  }
+
+  // Deleta a associação entre a lista e o jogo na tabela list_games
+  const query = `DELETE FROM list_games WHERE list_id = ? AND game_id = ?`;
+
+  db.query(query, [listId, gameId], (err, result) => {
+    if (err) {
+      console.error("Erro ao remover jogo da lista:", err);
+      return res
+        .status(500)
+        .json({ message: "Erro ao remover jogo da lista!" });
     }
-  
-    // Deleta a associação entre a lista e o jogo na tabela list_games
-    const query = `DELETE FROM list_games WHERE list_id = ? AND game_id = ?`;
-  
-    db.query(query, [listId, gameId], (err, result) => {
-      if (err) {
-        console.error("Erro ao remover jogo da lista:", err);
-        return res.status(500).json({ message: "Erro ao remover jogo da lista!" });
-      }
-  
-      if (result.affectedRows > 0) {
-        return res.status(200).json({ message: "Jogo removido da lista!" });
-      } else {
-        return res.status(404).json({ message: "Jogo não encontrado na lista!" });
-      }
-    });
+
+    if (result.affectedRows > 0) {
+      return res.status(200).json({ message: "Jogo removido da lista!" });
+    } else {
+      return res.status(404).json({ message: "Jogo não encontrado na lista!" });
+    }
   });
-  
+});
 
 // Rota para buscar jogos na API RAWG
 app.get("/api/lists/search-games", async (req, res) => {
-    const query = req.query.query; // Parâmetro de busca do frontend
-  
-    if (!query) {
-      return res.status(400).send("Parâmetro de busca não fornecido");
+  const query = req.query.query; // Parâmetro de busca do frontend
+
+  if (!query) {
+    return res.status(400).send("Parâmetro de busca não fornecido");
+  }
+
+  try {
+    // Chama a API do RAWG para buscar os jogos
+    const response = await axios.get("https://api.rawg.io/api/games", {
+      params: {
+        search: query,
+        key: "b07a5bb97c484fcba2b68d5d6e04b9ea", // Sua chave de API RAWG
+      },
+    });
+
+    // Retorna os resultados encontrados
+    res.json(response.data.results);
+  } catch (err) {
+    console.error("Erro ao buscar jogos na API RAWG:", err);
+    return res.status(500).send("Erro ao buscar jogos na API RAWG");
+  }
+});
+
+// Rota para o upload da imagem
+app.post('/api/upload-profile-image', upload.single('profile_image'), (req, res) => {
+    if (!req.file) {
+      return res.status(400).send({ message: 'No file uploaded' });
     }
-  
-    try {
-      // Chama a API do RAWG para buscar os jogos
-      const response = await axios.get('https://api.rawg.io/api/games', {
-        params: {
-          search: query,
-          key: 'b07a5bb97c484fcba2b68d5d6e04b9ea', // Sua chave de API RAWG
-        },
-      });
-  
-      // Retorna os resultados encontrados
-      res.json(response.data.results);
-    } catch (err) {
-      console.error("Erro ao buscar jogos na API RAWG:", err);
-      return res.status(500).send("Erro ao buscar jogos na API RAWG");
-    }
+    // Salva o caminho da imagem no banco de dados ou envia a URL diretamente
+    const profileImageUrl = req.file.filename; // Nome do arquivo salvo
+    res.status(200).json({ profile_image: profileImageUrl });
   });
+
+ 
+
 
 // Inicialização do servidor
 const PORT = 3000;
