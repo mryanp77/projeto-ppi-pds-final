@@ -17,7 +17,7 @@ export class ChangeUsernameComponent {
     this.authService.changeUsername(this.newUsername, this.password).subscribe(
       (response) => {
         alert('Nome de usuário alterado com sucesso!');
-        this.router.navigate(['/profile']); // Redireciona para o perfil após alteração
+        this.router.navigate(['/profile']);
       },
       (error) => {
         alert('Erro ao alterar nome de usuário. Verifique a senha e tente novamente.');

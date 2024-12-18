@@ -10,13 +10,13 @@ import { GameService } from '../services/game.service';
   styleUrls: ['./list-details.component.css'],
 })
 export class ListDetailsComponent implements OnInit {
-  listId: string | null = null; // O ID da lista pode ser null inicialmente
+  listId: string | null = null;
   listName: string = '';
   listDescription: string = '';
   addedGames: any[] = [];
-  searchQuery: string = ''; // Para armazenar a pesquisa do usuário
-  searchResults: any[] = []; // Para armazenar os jogos encontrados
-  isEditing: boolean = false; // Controle de edição
+  searchQuery: string = '';
+  searchResults: any[] = [];
+  isEditing: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,30 +27,26 @@ export class ListDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Obtém o 'listId' da URL (parametro de rota)
     this.listId = this.route.snapshot.paramMap.get('listId');
 
     if (this.listId) {
-      this.loadListDetails(this.listId); // Chama a função para carregar os detalhes da lista
+      this.loadListDetails(this.listId);
     } else {
       console.error('ID da lista não encontrado!');
-      // Se o 'listId' não for encontrado, redireciona para a página inicial ou outra ação
       this.router.navigate(['/']);
     }
   }
 
-  // Habilita a edição do nome e descrição
   editList(): void {
     this.isEditing = true;
   }
 
-  // Função para carregar os detalhes da lista a partir do ID
   loadListDetails(listId: string): void {
     this.http.get(`http://localhost:3000/api/list-details/${listId}`).subscribe(
       (data: any) => {
         this.listName = data.name;
         this.listDescription = data.description;
-        this.addedGames = data.games; // Aqui você armazena os jogos
+        this.addedGames = data.games;
       },
       (error) => {
         console.error('Erro ao carregar os detalhes da lista:', error);
@@ -58,42 +54,38 @@ export class ListDetailsComponent implements OnInit {
     );
   }
 
-  // Função para salvar as alterações feitas no nome ou descrição da lista
   saveChanges(): void {
     const updatedList = {
-      name: this.listName, // Nome da lista atualizado
-      description: this.listDescription, // Descrição da lista atualizada
-      games: this.addedGames, // Lista de jogos (não alterada diretamente)
+      name: this.listName,
+      description: this.listDescription,
+      games: this.addedGames,
     };
 
-    console.log('Dados a serem enviados para o backend:', updatedList); // Log para verificar os dados
+    console.log('Dados a serem enviados para o backend:', updatedList);
 
-    // Chama o serviço para atualizar a lista no backend
     this.listService.updateList(this.listId!, updatedList).subscribe(
       (response) => {
-        console.log('Resposta do backend:', response); // Log para verificar a resposta
-        alert('Lista atualizada com sucesso!'); // Exibe uma mensagem de sucesso
-        this.isEditing = false; // Desativa o modo de edição após salvar
+        console.log('Resposta do backend:', response);
+        alert('Lista atualizada com sucesso!');
+        this.isEditing = false;
       },
       (error) => {
-        console.error('Erro ao salvar as alterações:', error); // Exibe uma mensagem de erro
+        console.error('Erro ao salvar as alterações:', error);
       }
     );
   }
 
-  // Cancela a edição e restaura os valores originais
   cancelEdit(): void {
     this.isEditing = false;
-    this.loadListDetails(this.listId!); // Restaura os dados originais
+    this.loadListDetails(this.listId!);
   }
 
-  // Pesquisa jogos com base na entrada do usuário
   onSearchInput() {
     if (this.searchQuery.trim()) {
       this.gameService.searchGames(this.searchQuery).subscribe(
         (response) => {
-          console.log(response);  // Adicionando o log para ver a estrutura da resposta
-          this.searchResults = response.results.slice(0, 10); // Limita a 10 resultados
+          console.log(response);
+          this.searchResults = response.results.slice(0, 10);
         },
         (error) => console.error('Erro ao buscar jogos:', error)
       );
@@ -104,12 +96,12 @@ export class ListDetailsComponent implements OnInit {
 
   addGameToList(game: any) {
     const gameData = {
-      listId: this.listId, // Certifique-se de que o listId está definido
+      listId: this.listId,
       gameId: game.id,
       gameName: game.name,
       backgroundImage: game.background_image,
     };
-  
+
     this.http.post('http://localhost:3000/api/lists/add-game-to-list', gameData)
       .subscribe(
         response => {
@@ -120,19 +112,16 @@ export class ListDetailsComponent implements OnInit {
         }
       );
   }
-  
 
   removeGameFromList(game: any): void {
-    // Certifique-se de que o gameId está sendo passado corretamente
-    const gameId = game.game_id;  // Ou game.id, dependendo do seu objeto
-    const listId = this.listId;  // Certifique-se de que a listId está correta
-    
+    const gameId = game.game_id;
+    const listId = this.listId;
+
     this.http.delete(`http://localhost:3000/api/lists/remove-game/${listId}/${gameId}`)
       .subscribe(
         (response) => {
           console.log('Jogo removido da lista!');
-          // Atualize a lista de jogos removendo o jogo removido
-          this.addedGames = this.addedGames.filter((g) => g.game_id !== gameId); // Filtra o jogo removido
+          this.addedGames = this.addedGames.filter((g) => g.game_id !== gameId);
         },
         (error) => {
           console.error('Erro ao remover jogo:', error);
@@ -140,7 +129,6 @@ export class ListDetailsComponent implements OnInit {
       );
   }
 
-  // Adicionar um jogo diretamente à lista (exemplo)
   addGame(): void {
     const selectedGame = {
       id: 1,

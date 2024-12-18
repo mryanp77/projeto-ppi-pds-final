@@ -23,6 +23,7 @@ import { ChangeEmailComponent } from './components/change-email/change-email.com
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { CreateListComponent } from './components/create-list/create-list.component';
 import { ListDetailsComponent } from './list-details/list-details.component';
+import { UserCommentsComponent } from './components/user-comments/user-comments.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -47,6 +48,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ChangePasswordComponent,
     CreateListComponent,
     ListDetailsComponent,
+    UserCommentsComponent,
   ],
   imports: [
     BrowserModule,

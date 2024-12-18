@@ -1,7 +1,53 @@
 .card-img-top {
-    width: 300px; /* Tamanho maior da imagem */
-    height: 300px; /* Tamanho maior da imagem */
-    object-fit: cover; /* Mantém a proporção da imagem */
-    margin: 0 auto; /* Centraliza a imagem horizontalmente */
-    display: block; /* Garante que o 'margin: 0 auto' funcione */
-  }
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  margin: 0 auto;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+}
+
+.card {
+  background-color: #2C2C2C;
+  color: #FFFFFF;
+  border: none;
+}
+
+.card-body {
+  background-color: #2C2C2C;
+  color: #FFFFFF;
+}
+
+.card a {
+  color: #000000;
+}
+
+.card a:hover {
+  color: #FFF;
+}
+
+.card-title {
+  color: #FFFFFF;
+}
+
+.card-text {
+  color: #DDDDDD;
+}
+
+.list-group-item {
+  background-color: #2C2C2C;
+  color: #FFFFFF;
+  border: 1px solid #444444;
+  border-radius: 10px;
+}
+
+.list-group-item a {
+  color: #47c528;
+}
+
+.list-group-item a:hover {
+  color: #348c1d;
+}

@@ -1,7 +1,6 @@
-/* Estilos para o formulário de login */
 .login-form-container {
-  width: 100%; /* Tornando o formulário responsivo */
-  max-width: 600px; /* Definindo uma largura máxima maior */
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
   padding: 30px;
   background-color: #212428;
@@ -23,7 +22,6 @@
   height: 100vh;
 }
 
-/* Título do formulário */
 .login-form-container h2 {
   text-align: center;
   margin-bottom: 20px;
@@ -32,7 +30,6 @@
   color: #fff;
 }
 
-/* Estilo para o campo de entrada */
 .login-form-container .form-control {
   background-color: #2c2c2c;
   color: #fff;
@@ -47,7 +44,6 @@
   border-color: #007bff;
 }
 
-/* Estilo para o botão de login */
 .login-form-container .btn {
   width: 100%;
   background-color: #007bff;
@@ -62,7 +58,6 @@
   background-color: #0056b3;
 }
 
-/* Estilo para o texto de redirecionamento */
 .login-form-container .form-text {
   color: #dcdcdc;
   text-align: center;
@@ -78,11 +73,10 @@
 }
 
 input::placeholder {
-  color: #fff !important; /* Definindo a cor do placeholder para branco */
-  opacity: 0.7; /* Ajustando a opacidade para não ficar tão intenso */
+  color: #fff !important;
+  opacity: 0.7;
 }
 
-/* Se você também tiver textarea, pode aplicar o mesmo estilo */
 textarea::placeholder {
   color: #fff !important;
   opacity: 0.7;
@@ -90,34 +84,32 @@ textarea::placeholder {
 
 input,
 textarea {
-  width: 100% !important; /* Garantir que ocupe toda a largura do contêiner pai */
-  max-width: 800px; /* Aumenta a largura máxima para 800px, você pode ajustar esse valor */
-  margin: 10px auto; /* Centraliza e dá algum espaçamento vertical */
-  padding: 12px 20px; /* Espaçamento interno confortável */
-  border-radius: 8px; /* Borda arredondada */
-  border: 1px solid #ccc; /* Borda de cor neutra */
-  background-color: #2c2c2c; /* Fundo escuro para os inputs */
-  color: white; /* Cor do texto */
-  font-size: 1rem; /* Tamanho confortável para o texto */
+  width: 100% !important; 
+  max-width: 800px; 
+  margin: 10px auto; 
+  padding: 12px 20px; 
+  border-radius: 8px; 
+  border: 1px solid #ccc; 
+  background-color: #2c2c2c; 
+  color: white;
+  font-size: 1rem; 
 }
 
-/* Opcional: Ajustar o tamanho da fonte para os inputs */
 input,
 textarea {
-  font-size: 1rem; /* Aumentando o tamanho da fonte para facilitar a leitura */
+  font-size: 1rem;
 }
 
-/* Garantir que o formulário se ajuste corretamente no centro */
 .form-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Altura da tela inteira para centralizar verticalmente */
+  height: 100vh; 
   padding: 20px;
 }
 
 form {
-  width: 100%; /* Garantir que o formulário ocupe toda a largura disponível */
-  max-width: 600px; /* Largura máxima do formulário */
+  width: 100%;
+  max-width: 600px;
   padding: 30px;
 }

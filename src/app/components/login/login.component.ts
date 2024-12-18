@@ -11,34 +11,26 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  errorMessage: string = '';
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
-  // login() {
-  //   const credentials = { email: this.email, password: this.password };
-
-  //   this.http.post('http://localhost:3000/api/login', credentials).subscribe({
-  //     next: (response: any) => {
-  //       alert('Login bem-sucedido!');
-  //       this.authService.login(); // Atualiza o estado global de autenticação
-  //       this.router.navigate(['/']); // Redireciona para a página inicial
-  //     },
-  //     error: (err) => alert('Erro ao fazer login: ' + err.message)
-  //   });
-  // }
-
   login() {
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Por favor, preencha todos os campos!'; 
+      return;
+    }
+    
     const credentials = { email: this.email, password: this.password };
   
     this.http.post('http://localhost:3000/api/login', credentials).subscribe({
       next: (response: any) => {
-        console.log('Resposta da API:', response); // Verifique a resposta
+        console.log('Resposta da API:', response);
   
-        // Verifique se a resposta contém os dados necessários
         if (response && response.user) {
-          const userEmail = response.user.email; // Usar email como identificador
-          this.authService.login(userEmail); // Passa o email para o serviço de autenticação
-          this.router.navigate(['/']); // Redireciona para a página inicial
+          const userEmail = response.user.email; 
+          this.authService.login(userEmail); 
+          this.router.navigate(['/']); 
         } else {
           alert('Erro: Dados do usuário não encontrados na resposta da API.');
         }
@@ -46,8 +38,4 @@ export class LoginComponent {
       error: (err) => alert('Erro ao fazer login: ' + err.message)
     });
   }
-  
-  
-  
-  
 }

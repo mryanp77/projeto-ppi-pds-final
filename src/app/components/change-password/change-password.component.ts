@@ -23,8 +23,8 @@ export class ChangePasswordComponent {
     this.authService.changePassword(this.currentPassword, this.newPassword).subscribe(
       (response) => {
         alert('Senha alterada com sucesso! Faça login novamente.');
-        this.authService.logout(); // Desloga o usuário
-        this.router.navigate(['/login']); // Redireciona para a página de login
+        this.authService.logout();
+        this.router.navigate(['/login']);
       },
       (error) => {
         alert('Erro ao alterar a senha. Verifique os dados e tente novamente.');

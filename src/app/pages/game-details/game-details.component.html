@@ -8,7 +8,7 @@
     <div class="overlay"></div>
     <div class="game-info">
       <h1>{{ game.name }}</h1>
-      <p class="release-date">Lançado em: {{ formatarData(game.released) }}</p>
+      <p class="release-date">Lançamento: {{ formatarData(game.released) }}</p>
       <p class="rating">Avaliação: {{ game.rating }} / 5</p>
     </div>
   </div>
@@ -62,6 +62,60 @@
   </div>
 </div>
 
-<div *ngIf="isLoading" class="loading">
-  <p>Carregando...</p>
+<div class="comments-section">
+  <h2>Comentários</h2>
+
+  <div class="new-comment-box">
+    <h4>Deixe seu comentário</h4>
+    <input
+      type="text"
+      placeholder="Título do comentário"
+      [(ngModel)]="novoComentario.title"
+      class="form-control mb-2"
+    />
+    <textarea
+      rows="3"
+      placeholder="Escreva seu comentário aqui"
+      [(ngModel)]="novoComentario.comment"
+      class="form-control mb-2"
+    ></textarea>
+    <label for="rating">Avaliação:</label>
+    <input
+      type="number"
+      min="1"
+      max="10"
+      [(ngModel)]="novoComentario.rating"
+      class="form-control mb-2"
+    />
+    <button (click)="enviarComentario()" class="btn btn-primary">
+      Enviar Comentário
+    </button>
+  </div>
+
+  <div *ngIf="comentarios.length > 0; else noComments">
+    <div *ngFor="let comentario of comentarios" class="comment">
+      <div class="comment-header">
+        <img
+          [src]="comentario.profile_image || 'https://via.placeholder.com/50'"
+          alt="Foto do usuário"
+          class="profile-image"
+        />
+        <div>
+          <strong>{{ comentario.username }}</strong>
+          <p>{{ comentario.created_at | date : "dd/MM/yyyy HH:mm" }}</p>
+        </div>
+      </div>
+      <h5>{{ comentario.title }}</h5>
+      <p>{{ comentario.comment }}</p>
+      <p>Avaliação: ⭐ {{ comentario.rating }} / 10</p>
+    </div>
+  </div>
+
+  <ng-template #noComments>
+    <p>Seja o primeiro a comentar!</p>
+  </ng-template>
+
+  <div *ngIf="isLoading" class="loading">
+    <p>Carregando...</p>
+  </div>
 </div>

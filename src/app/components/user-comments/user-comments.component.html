@@ -1,0 +1,34 @@
+<div class="container mt-5">
+    <h2>Seus Comentários</h2>
+  
+    <div *ngIf="userComments.length > 0; else noComments">
+      <ul class="list-group">
+        <li
+          *ngFor="let comment of userComments"
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <div>
+            <h5>{{ comment.title }}</h5>
+            <p>{{ comment.comment }}</p>
+            <p>
+              <strong>Jogo:</strong>
+              <a [routerLink]="['/game', comment.gameId]">
+                {{ comment.gameName }}
+              </a>
+            </p>
+            <p>
+              <strong>Avaliação:</strong> ⭐ {{ comment.rating }} / 10
+            </p>
+          </div>
+          <small class="text-muted">
+            {{ comment.created_at | date: 'dd/MM/yyyy HH:mm' }}
+          </small>
+        </li>
+      </ul>
+    </div>
+  
+    <ng-template #noComments>
+      <p class="text-muted">Você ainda não fez nenhum comentário.</p>
+    </ng-template>
+  </div>
+  

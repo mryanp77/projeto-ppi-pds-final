@@ -1,7 +1,7 @@
-<div class="create-list-container">
+<div class="wrapper">
+  <div class="create-list-container">
     <h1>Criar Lista</h1>
-  
-    <!-- Campo para o nome da lista -->
+
     <div class="form-group">
       <label for="list-name">Nome da Lista:</label>
       <input
@@ -12,8 +12,7 @@
         [(ngModel)]="listName"
       />
     </div>
-  
-    <!-- Campo para a descrição da lista -->
+
     <div class="form-group">
       <label for="list-description">Descrição:</label>
       <textarea
@@ -24,8 +23,7 @@
         [(ngModel)]="listDescription"
       ></textarea>
     </div>
-  
-    <!-- Barra de pesquisa para adicionar jogos -->
+
     <div class="search-bar mt-3">
       <label for="game-search">Pesquisar Jogos:</label>
       <input
@@ -34,12 +32,9 @@
         class="form-control"
         placeholder="Pesquise por jogos..."
         [(ngModel)]="searchQuery"
-        (input)="onSearchInput()"
+        (ngModelChange)="onSearchInput()"
       />
-      <div
-        class="search-results"
-        *ngIf="searchResults.length > 0"
-      >
+      <div class="search-results" *ngIf="searchResults.length > 0">
         <ul>
           <li
             *ngFor="let game of searchResults"
@@ -61,8 +56,7 @@
         </ul>
       </div>
     </div>
-  
-    <!-- Lista de jogos adicionados -->
+
     <div class="added-games mt-4">
       <h3>Jogos Adicionados:</h3>
       <ul>
@@ -85,8 +79,7 @@
         </li>
       </ul>
     </div>
-  
-    <!-- Botão para salvar a lista -->
+
     <div class="save-list mt-4">
       <button
         class="btn btn-primary"
@@ -97,4 +90,4 @@
       </button>
     </div>
   </div>
-  
+</div>

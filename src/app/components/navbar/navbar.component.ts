@@ -22,7 +22,6 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Subscribing to authentication status changes
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
     });
@@ -33,8 +32,8 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout(); // Calls the centralized logout logic
-    this.router.navigate(['/login']); // Redirects to the login page
+    this.authService.logout(); 
+    this.router.navigate(['/login']); 
   }
 
   toggleSearchBar() {
